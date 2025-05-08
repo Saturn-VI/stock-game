@@ -1,3 +1,1 @@
-public abstract AbstractTrader {
-    
-}
+public abstract class AbstractTrader {}
