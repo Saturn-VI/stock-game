@@ -1,0 +1,12 @@
+@echo off
+
+REM cd and build files in src/
+cd src
+javac *.java
+
+REM move classes to target/
+cd ..
+move src\*.class target\
+
+REM Run the main class
+java -cp target Main
