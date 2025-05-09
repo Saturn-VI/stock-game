@@ -21,4 +21,26 @@ public abstract class AbstractTrader {
             portfolio.add(new Investment(stock, 0));
         }
     }
+
+    private Investment getInvestmentForStock(Stock stock) {
+        for (Investment investment : portfolio) {
+            if (investment.getStock().equals(stock)) {
+                return investment;
+            }
+        }
+        // don't have an investment for that ticker in the portfolio yet, make one
+        Investment investment = new Investment(stock, 0);
+        portfolio.add(investment);
+        return investment;
+    }
+
+    // TODO
+    public void buyShares(Stock stock, int sharesToBuy) {
+
+    }
+
+    // TODO
+    public void sellShares(Stock stock, int sharesToSell) {
+
+    }
 }
