@@ -1,5 +1,7 @@
 public class Main {
-	public static void main(String[] args) {
-	    DataReader.getStocks();
-	}
+
+    public static void main(String[] args) {
+        Market.initializeMarket();
+        DataReader.getStocks();
+    }
 }
