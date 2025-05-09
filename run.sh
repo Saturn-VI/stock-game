@@ -1,5 +1,7 @@
 #!/bin/sh
 
+mkdir target
+
 # cd and build files in src/
 javac *.java
 
