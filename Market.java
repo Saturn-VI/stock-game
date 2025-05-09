@@ -6,5 +6,7 @@ public class Market {
 
 	public Market() {
 	    // read in from checkpoint file
+		stocks = DataReader.getStocks();
+		System.out.println(stocks);
 	}
 }

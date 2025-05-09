@@ -21,7 +21,6 @@ public class DataReader {
             stocks.add(new Stock(symbol, name, price, totalShares));
         }
         scan.close();
-        System.out.println(stocks);
         return stocks;
     }
 }
