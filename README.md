@@ -5,7 +5,7 @@ Example GUI
     - [ ] Portfolio tab
     - [ ] Top stocks tab
 - [ ] Make traders
-    - [ ] Finish abstract trader class
+    - [x] Finish abstract trader class
     - [ ] Trading bots
     - [ ] Player trader class
 - [ ] Make stock system
