@@ -28,6 +28,17 @@ public class Stock {
 	    return totalShares;
 	}
 
+	public boolean equals(Object obj) {
+	    if (obj instanceof Stock) {
+			Stock s = (Stock) obj;
+			return (this.getSymbol().equals(s.getSymbol()) &&
+			        this.getName().equals(s.getName()) &&
+			        this.getPrice() == s.getPrice() &&
+					this.getTotalShares() == s.getTotalShares());
+		}
+		return false;
+	}
+
 	public String toString() {
 	    return String.format("%s $%.2f", symbol, price);
 	}
