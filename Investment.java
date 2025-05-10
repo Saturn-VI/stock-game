@@ -1,7 +1,7 @@
-public record Transaction(int shares, double price) {};
+record Transaction(int shares, double price) {};
 /*
 Transaction is an immutable data class that records(put not intended lmao) the
-stuff being exchanged during a transactiion. Shares is the number of shares 
+stuff being exchanged during a transaction. Shares is the number of shares 
 bought/sold, while price is the total price paid/received. 
 If shares is negative, it is sold. If shares is positive, it is a bought. 
 If price is negative, it is bought. If price is positive, it is sold.
@@ -45,7 +45,7 @@ public class Investment {
         if (sharesToBuy > sharesThatCanBeBought) {
             throw new IllegalArgumentException("Cannot buy more shares than can be bought with available money.");
         }
-        return new Transaction(sharesBought, -1 * stock.getPrice() * sharesBought);
+        return new Transaction(sharesToBuy, -1 * stock.getPrice() * sharesToBuy);
     }
 
     public double getTotalValue() {
