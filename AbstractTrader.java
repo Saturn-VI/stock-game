@@ -15,7 +15,7 @@ public abstract class AbstractTrader {
         portfolio = new ArrayList<Investment>();
     }
 
-    public AbstractTrader(double money, Stock[] stocks) {
+    public AbstractTrader(double money, ArrayList<Stock> stocks) {
         this.money = money;
         portfolio = new ArrayList<Investment>();
         for (Stock stock : stocks) {
