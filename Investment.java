@@ -1,11 +1,11 @@
-record Transaction(int shares, double price) {};
-/*
-Transaction is an immutable data class that records(put not intended lmao) the
-stuff being exchanged during a transaction. Shares is the number of shares 
-bought/sold, while price is the total price paid/received. 
-If shares is negative, it is sold. If shares is positive, it is a bought. 
-If price is negative, it is bought. If price is positive, it is sold.
-*/
+/**
+ * Transaction is an immutable data class that records(put not intended lmao) the
+ * stuff being exchanged during a transaction. Shares is the number of shares
+ * bought/sold, while price is the total price paid/received.
+ * If shares is negative, it is sold. If shares is positive, it is a bought.
+ * If price is negative, it is bought. If price is positive, it is sold.
+ */
+record Transaction(int shares, double price) {}
 
 public class Investment {
 
@@ -24,10 +24,14 @@ public class Investment {
      * @return how much money was gained
      */
     public Transaction sellShares(int sharesToSell) {
-        if (sharesToSell > shares) 
-            throw new IllegalArgumentException("Cannot sell more shares than owned");
+        if (sharesToSell > shares) throw new IllegalArgumentException(
+            "Cannot sell more shares than owned"
+        );
         shares -= sharesToSell;
-        return new Transaction(-1 * sharesToSell, stock.getPrice() * sharesToSell);
+        return new Transaction(
+            -1 * sharesToSell,
+            stock.getPrice() * sharesToSell
+        );
     }
 
     /**
@@ -38,14 +42,20 @@ public class Investment {
      * @return 2-element array: first element is how many stocks were bought, second element is how much it cost
      */
     public Transaction buyShares(int sharesToBuy, double moneyAvailable) {
-        if (sharesToBuy < 0)
-            throw new IllegalArgumentException("Cannot buy a negative number of shares.");
-        
+        if (sharesToBuy < 0) throw new IllegalArgumentException(
+            "Cannot buy a negative number of shares."
+        );
+
         int sharesThatCanBeBought = (int) (moneyAvailable / stock.getPrice());
         if (sharesToBuy > sharesThatCanBeBought) {
-            throw new IllegalArgumentException("Cannot buy more shares than can be bought with available money.");
+            throw new IllegalArgumentException(
+                "Cannot buy more shares than can be bought with available money."
+            );
         }
-        return new Transaction(sharesToBuy, -1 * stock.getPrice() * sharesToBuy);
+        return new Transaction(
+            sharesToBuy,
+            -1 * stock.getPrice() * sharesToBuy
+        );
     }
 
     public double getTotalValue() {
