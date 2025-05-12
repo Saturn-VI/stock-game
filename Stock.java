@@ -5,11 +5,11 @@ public class Stock {
 	private double price;
 	private final long totalShares; // total shares that exist for this stock - this is not changed, just used to give more weight to certain stock movements
 
-	public Stock(String symbol, String name, double price, long totalShares) {
-	    this.symbol = symbol;
-		this.name = name;
+	public Stock(String symbol, double price, long totalShares, String name) {
+	  this.symbol = symbol;
 		this.price = price;
 		this.totalShares = totalShares;
+		this.name = name;
 	}
 
 	public String getSymbol() {
@@ -28,6 +28,11 @@ public class Stock {
 	    return totalShares;
 	}
 
+	public double getMarketCap() {
+		return price * totalShares;
+	}
+
+ @Override
 	public boolean equals(Object obj) {
 	    if (obj instanceof Stock) {
 			Stock s = (Stock) obj;
@@ -39,6 +44,7 @@ public class Stock {
 		return false;
 	}
 
+ @Override
 	public String toString() {
 	    return String.format("%s $%.2f", symbol, price);
 	}

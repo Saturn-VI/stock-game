@@ -1,7 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class DataReader {
     public static ArrayList<Stock> getStocks() {
@@ -18,7 +18,7 @@ public class DataReader {
             double price = scan.nextDouble();
             long totalShares = scan.nextLong();
             String name = scan.nextLine();
-            stocks.add(new Stock(symbol, name, price, totalShares));
+            stocks.add(new Stock(symbol, price, totalShares, name));
         }
         scan.close();
         return stocks;
