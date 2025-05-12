@@ -4,3 +4,17 @@ class NotEnoughMoneyException extends Exception {
         super(m);
     }
 }
+
+class NotEnoughSharesException extends Exception {
+
+    public NotEnoughSharesException(String m) {
+        super(m);
+    }
+}
+
+class TraderDoesNotExistException extends Exception {
+
+    public TraderDoesNotExistException(String m) {
+        super(m);
+    }
+}

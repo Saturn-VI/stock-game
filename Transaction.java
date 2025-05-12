@@ -8,5 +8,9 @@ public record Transaction(
     int shares,
     double price,
     boolean selling,
-    int traderId
+    int traderId,
+    long transactionIndex,
+    long timeTransactionMade,
+    double marketPriceAtTimeOfTransaction,
+    Stock stock
 ) {}
