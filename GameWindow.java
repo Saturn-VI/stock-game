@@ -9,6 +9,6 @@ public class GameWindow {
 
     public static class GameFrame extends JFrame {
 
-        private JPanel stockDisplayPanel, topStockPanel, portfolioPanel;
+        private JFrame mainFrame, stockDisplayFrame, topStockFrame, portfolioFrame;
     }
 }
