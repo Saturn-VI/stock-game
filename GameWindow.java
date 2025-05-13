@@ -36,6 +36,7 @@ public class GameWindow {
 
         public PortfolioPanel() {
             super();
+            JTable table = new JTable(new CustomTableModel());
         }
 
         class CustomTableModel extends AbstractTableModel {
