@@ -9,7 +9,7 @@ public class Market {
     public static void initializeMarket() {
         // read in from checkpoint file
         stocks = DataReader.getStocks();
-        System.out.println(stocks);
+        // System.out.println(stocks);
     }
 
     public static Stock getStockByTicker(String ticker) {
