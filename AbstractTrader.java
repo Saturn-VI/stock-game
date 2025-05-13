@@ -3,22 +3,16 @@ import java.util.ArrayList;
 public abstract class AbstractTrader {
 
     private double money;
-    private ArrayList<Investment> portfolio = new ArrayList<>();
-    private ArrayList<Transaction> transactions = new ArrayList<>();
+    private final int traderId;
 
-    public AbstractTrader() {
+    public AbstractTrader(int traderId) {
         money = 0.0;
+        this.traderId = traderId;
     }
 
-    public AbstractTrader(double money) {
+    public AbstractTrader(int traderId, double money) {
         this.money = money;
-    }
-
-    public AbstractTrader(double money, ArrayList<Stock> stocksList) {
-        this.money = money;
-        for (Stock stock : stocksList) {
-            portfolio.add(new Investment(stock, 0));
-        }
+        this.traderId = traderId;
     }
 
     private Investment getInvestmentForStock(Stock stock) {
@@ -44,7 +38,7 @@ public abstract class AbstractTrader {
         Investment investment = getInvestmentForStock(stock);
         try {
             Transaction tr = investment.buyShares(sharesToBuy, money);
-            money += tr.price(); 
+            money += tr.price();
             // it's  a += because the value of tr.price() will be negative when buying.
             transactions.add(tr);
         } catch (IllegalArgumentException e) {
