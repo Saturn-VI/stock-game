@@ -2,3 +2,15 @@ modules = ["java-graalvm22.3", "bash"]
 
 [nix]
 channel = "stable-24_05"
+
+[workflows]
+runButton = "run.sh"
+
+[[workflows.workflow]]
+name = "run.sh"
+mode = "sequential"
+author = 21725496
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sh run.sh"
