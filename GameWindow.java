@@ -10,5 +10,9 @@ public class GameWindow {
     public static class GameFrame extends JFrame {
 
         private JFrame mainFrame, stockDisplayFrame, topStockFrame, portfolioFrame;
+
+        public GameFrame() {
+            super("Game");
+        }
     }
 }
