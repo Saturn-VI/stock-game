@@ -33,7 +33,7 @@ public class Market {
         trader.changeMoney(-1 * price);
     }
 
-    public static void sellShares(int shares, Stock stock, int traderId) throws NotEnoughtSharesException {
+    public static void sellShares(int shares, Stock stock, int traderId) throws NotEnoughSharesException {
         AbstractTrader trader = getTraderById(traderId);
         double price = sharesOwnedInStock(traderId, stock) * stock.getPrice();
         Transaction tr = new Transaction(shares, stock, price, true, traderId, day);
@@ -42,7 +42,7 @@ public class Market {
     }
 
     public static long sharesOwnedInStock(int traderId, Stock stock) {
-        Trader trader = getTraderById(traderId);
+        AbstractTrader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
         }
@@ -59,8 +59,8 @@ public class Market {
         return sharesOwned;
     }
 
-    public static double traderMoneyAmount(int traderId) {
-        Trader trader = getTraderById(traderId);
+    public static double getTraderMoney(int traderId) {
+        AbstractTrader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
         }
@@ -68,11 +68,11 @@ public class Market {
             traderId
         );
         double money = trader.initialMoney();
-        for (Transaction t : relevantTransactions) {
+        for (Transaction t : relevant) {
             if (t.selling()) {
-                money += t.shares() * t.marketPriceAtTimeOfTransaction();
+                money += t.shares() * t.initialPrice();
             } else {
-                money -= t.shares() * t.marketPriceAtTimeOfTransaction();
+                money -= t.shares() * t.initialPrice();
             }
         }
         return money;
@@ -88,7 +88,7 @@ public class Market {
         return out;
     }
 
-    public static Trader getTraderById(int traderId) {
+    public static AbstractTrader getTraderById(int traderId) {
         return traders.get(traderId);
     }
 

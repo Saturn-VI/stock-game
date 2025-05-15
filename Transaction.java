@@ -10,6 +10,6 @@ public record Transaction(
     double price,
     boolean selling,
     int traderId,
-    long dayTransactionMade
-    //, double initialPrice // price per share at the time of transaction
+    long dayTransactionMade,
+    double initialPrice
 ) {}

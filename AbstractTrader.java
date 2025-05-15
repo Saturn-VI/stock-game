@@ -2,16 +2,16 @@ import java.util.ArrayList;
 
 public abstract class AbstractTrader {
 
-    private double money;
+    private final double initialMoney;
     private final int traderId;
 
     public AbstractTrader(int traderId) {
-        money = 0.0;
+        initialMoney = 0.0;
         this.traderId = traderId;
     }
 
     public AbstractTrader(int traderId, double money) {
-        this.money = money;
+        this.initialMoney = money;
         this.traderId = traderId;
     }
 
@@ -32,13 +32,5 @@ public abstract class AbstractTrader {
      * @param sharesToSell how many shares should be sold
      */
 
-    public double getMoney() { return money; }
-    
-    public void setMoney(double m) {
-        this.money = m;
-    }
-
-    public void changeMoney(double m) {
-        this.money += m;
-    }
+    public double initialMoney() { return initialMoney; }
 }
