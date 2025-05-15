@@ -6,7 +6,7 @@ public abstract class AbstractTrader {
     private final int traderId;
 
     public AbstractTrader(int traderId) {
-        initialMoney = 0.0;
+        initialMoney = 10000;
         this.traderId = traderId;
     }
 

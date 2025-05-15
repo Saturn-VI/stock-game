@@ -4,7 +4,7 @@ public class Market {
 
     private static ArrayList<Stock> stocks;
     private static ArrayList<Transaction> transactions;
-    private static HashMap<Integer, AbstractTrader> traders;
+    private static ArrayList<AbstractTrader> traders;
     private static int day = 0;
 
     public static void initializeMarket() {
@@ -28,17 +28,15 @@ public class Market {
     public static void buyShares(int shares, Stock stock, int traderId) throws NotEnoughMoneyException {
         AbstractTrader trader = getTraderById(traderId);
         double price = shares * stock.getPrice();
-        Transaction tr = new Transaction(shares, stock, price, false, traderId, day);
+        Transaction tr = new Transaction(shares, stock, price, false, traderId, day, stock.getPrice());
         transactions.add(tr);
-        trader.changeMoney(-1 * price);
     }
 
     public static void sellShares(int shares, Stock stock, int traderId) throws NotEnoughSharesException {
         AbstractTrader trader = getTraderById(traderId);
         double price = sharesOwnedInStock(traderId, stock) * stock.getPrice();
-        Transaction tr = new Transaction(shares, stock, price, true, traderId, day);
+        Transaction tr = new Transaction(shares, stock, price, true, traderId, day, stock.getPrice());
         transactions.add(tr);
-        trader.changeMoney(price);
     }
 
     public static long sharesOwnedInStock(int traderId, Stock stock) {
@@ -89,7 +87,9 @@ public class Market {
     }
 
     public static AbstractTrader getTraderById(int traderId) {
-        return traders.get(traderId);
+        for (Trader t : traders) {
+            
+        }
     }
 
     public static ArrayList<Stock> getStocks() {
