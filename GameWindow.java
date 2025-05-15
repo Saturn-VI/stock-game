@@ -82,15 +82,23 @@ public class GameWindow {
         }
 
         class CustomTableModel extends AbstractTableModel {
+            ArrayList<TableStockInfo> tableData;
+
+            public CustomTableModel() {
+                tableData = new ArrayList<TableStockInfo>();
+            }
 
             private static final String[] columnNames = new String[] {
                 "Name",
                 "Price",
                 "Shares Owned",
                 "Holding Value",
+                "Current Profit",
             };
 
             public void tableDataChanged() {
+                // TODO
+                // Update tableData
                 fireTableDataChanged();
             }
 
@@ -99,8 +107,7 @@ public class GameWindow {
             }
 
             public int getRowCount() {
-                ArrayList<String> names = Market.getListOfStocksForTrader(Main.playerTraderId);
-                return names.size();
+                return tableData.size();
             }
 
             public int getColumnCount() {
@@ -108,7 +115,23 @@ public class GameWindow {
             }
 
             public Object getValueAt(int row, int col) {
-                // TODO
+                switch (col) {
+                    case 0:
+                        // Name
+                        break;
+                    case 1:
+                        // Price
+                        break;
+                    case 2:
+                        // Shares Owned
+                        break;
+                    case 3:
+                        // Holding Value
+                        break;
+                    case 4:
+                        // Current Profit
+                        break;
+                }
                 return null;
             }
         }
