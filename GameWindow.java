@@ -1,8 +1,8 @@
 import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.AbstractTableModel;
 import java.util.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.table.AbstractTableModel;
 
 public class GameWindow {
 
@@ -36,6 +36,7 @@ public class GameWindow {
     }
 
     class PortfolioPanel extends JPanel {
+
         private JLabel moneyAmountLabel;
         private JScrollPane tableScrollPane;
         private JTable stockInfoTable;
@@ -76,12 +77,16 @@ public class GameWindow {
         }
 
         public void updatePortfolioInfo() {
-            moneyAmountLabel.setText("$" + Market.getTraderMoneyAmount(Main.playerTraderId));
-            CustomTableModel tableModel = ((CustomTableModel) stockInfoTable.getModel());
+            moneyAmountLabel.setText(
+                "$" + Market.getTraderMoneyAmount(Main.playerTraderId)
+            );
+            CustomTableModel tableModel =
+                ((CustomTableModel) stockInfoTable.getModel());
             tableModel.tableDataChanged();
         }
 
         class CustomTableModel extends AbstractTableModel {
+
             ArrayList<TableStockInfo> tableData;
 
             public CustomTableModel() {
