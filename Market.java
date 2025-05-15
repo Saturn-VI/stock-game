@@ -10,6 +10,8 @@ public class Market {
         // read in from checkpoint file
         stocks = DataReader.getStocks();
         // System.out.println(stocks);
+        transactions = new ArrayList<Transaction>();
+        traders = new ArrayList<Trader>();
     }
 
     public static Stock getStockByTicker(String ticker) {
@@ -63,7 +65,7 @@ public class Market {
         return sharesOwned;
     }
 
-    public static double traderMoneyAmount(int traderId) {
+    public static double getTraderMoneyAmount(int traderId) {
         Trader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
