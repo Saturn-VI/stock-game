@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.beans.Customizer;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.AbstractTableModel;
 import java.util.*;
 
@@ -30,14 +31,55 @@ public class GameWindow {
 
         gameFrame.setSize(600, 600);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.pack();
+        gameFrame.setMinimumSize(gameFrame.getSize());
         gameFrame.setVisible(true);
     }
 
     class PortfolioPanel extends JPanel {
+        private JLabel moneyAmountLabel;
+        private JScrollPane tableScrollPane;
+        private JTable stockInfoTable;
 
         public PortfolioPanel() {
             super();
-            JTable table = new JTable(new CustomTableModel());
+            this.setLayout(new GridBagLayout());
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.insets = new Insets(10, 10, 10, 10);
+
+            moneyAmountLabel = new JLabel("", SwingConstants.CENTER);
+            TitledBorder moneyBorder;
+            moneyBorder = BorderFactory.createTitledBorder("Money");
+            moneyBorder.setTitleJustification(TitledBorder.CENTER);
+            moneyAmountLabel.setBorder(moneyBorder);
+            moneyAmountLabel.setText("123");
+            moneyAmountLabel.setPreferredSize(new Dimension(150, 50));
+
+            tableScrollPane = new JScrollPane();
+            tableScrollPane.setPreferredSize(new Dimension(400, 100));
+            stockInfoTable = new JTable();
+            stockInfoTable = new JTable(new CustomTableModel());
+            stockInfoTable.setFillsViewportHeight(true);
+            tableScrollPane.add(stockInfoTable);
+
+            constraints.gridx = 2;
+            constraints.gridy = 0;
+            constraints.gridwidth = 1;
+            constraints.gridheight = 1;
+            this.add(moneyAmountLabel, constraints);
+
+            constraints.gridx = 0;
+            constraints.gridy = 1;
+            constraints.fill = GridBagConstraints.BOTH;
+            constraints.gridwidth = 3;
+            constraints.gridheight = 2;
+            this.add(tableScrollPane, constraints);
+        }
+
+        public void updatePortfolioInfo() {
+            moneyAmountLabel.setText("$" + Market.getTraderMoneyAmount(Main.playerTraderId));
+            CustomTableModel tableModel = ((CustomTableModel) stockInfoTable.getModel());
+            tableModel.tableDataChanged();
         }
 
         class CustomTableModel extends AbstractTableModel {
@@ -48,6 +90,10 @@ public class GameWindow {
                 "Shares Owned",
                 "Holding Value",
             };
+
+            public void tableDataChanged() {
+                fireTableDataChanged();
+            }
 
             public String getColumnName(int col) {
                 return columnNames[col];
