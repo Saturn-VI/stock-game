@@ -15,17 +15,6 @@ public abstract class AbstractTrader {
         this.traderId = traderId;
     }
 
-    private Investment getInvestmentForStock(Stock stock) {
-        for (Investment investment : portfolio) {
-            if (investment.getStock().equals(stock)) {
-                return investment;
-            }
-        }
-        // don't have an investment for that ticker in the portfolio yet, make one
-        Investment investment = new Investment(stock, 0);
-        portfolio.add(investment);
-        return investment;
-    }
 
     /**
      * Buys a certain amount of shares.
@@ -34,17 +23,6 @@ public abstract class AbstractTrader {
      * @param stock the stock for which to buy shares
      * @param sharesToBuy the amount of shares to buy
      */
-    public void buyShares(Stock stock, int sharesToBuy) {
-        Investment investment = getInvestmentForStock(stock);
-        try {
-            Transaction tr = investment.buyShares(sharesToBuy, money);
-            money += tr.price();
-            // it's  a += because the value of tr.price() will be negative when buying.
-            transactions.add(tr);
-        } catch (IllegalArgumentException e) {
-            throw e;
-        }
-    }
 
     /**
      * Sells a certain amount of shares.
@@ -53,14 +31,14 @@ public abstract class AbstractTrader {
      * @param stock the stock for which to sell shares
      * @param sharesToSell how many shares should be sold
      */
-    public void sellShares(Stock stock, int sharesToSell) {
-        Investment investment = getInvestmentForStock(stock);
-        try {
-            Transaction tr = investment.sellShares(sharesToSell);
-            money += tr.price();
-            transactions.add(tr);
-        } catch (IllegalArgumentException e) {
-            throw e;
-        }
+
+    public double getMoney() { return money; }
+    
+    public void setMoney(double m) {
+        this.money = m;
+    }
+
+    public void changeMoney(double m) {
+        this.money += m;
     }
 }
