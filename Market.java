@@ -4,7 +4,8 @@ public class Market {
 
     private static ArrayList<Stock> stocks;
     private static ArrayList<Transaction> transactions;
-    private static ArrayList<Trader> traders;
+    private static HashMap<Integer, AbstractTrader> traders;
+    private static int day = 0;
 
     public static void initializeMarket() {
         // read in from checkpoint file
@@ -24,22 +25,34 @@ public class Market {
     /**
      *
      */
-    public static void buyShares(int traderId, int stockAmount)
-        throws NotEnoughMoneyException {}
+    public static void buyShares(int shares, Stock stock, int traderId) throws NotEnoughMoneyException {
+        AbstractTrader trader = getTraderById(traderId);
+        double price = shares * stock.getPrice();
+        Transaction tr = new Transaction(shares, stock, price, false, traderId, day);
+        transactions.add(tr);
+        trader.changeMoney(-1 * price);
+    }
 
-    public static long sharesOwnedInStock(int traderId) {
+    public static void sellShares(int shares, Stock stock, int traderId) throws NotEnoughtSharesException {
+        AbstractTrader trader = getTraderById(traderId);
+        double price = sharesOwnedInStock(traderId, stock) * stock.getPrice();
+        Transaction tr = new Transaction(shares, stock, price, true, traderId, day);
+        transactions.add(tr);
+        trader.changeMoney(price);
+    }
+
+    public static long sharesOwnedInStock(int traderId, Stock stock) {
         Trader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
         }
-        ArrayList<Transaction> relevantTransactions = getTransactionsForTrader(
-            traderId
-        );
+        ArrayList<Transaction> relevantTransactions = getTransactionsForTrader(traderId);
         long sharesOwned = 0;
         for (Transaction transaction : relevantTransactions) {
-            if (transaction.selling()) {
+            boolean isStock = transaction.stock().equals(stock);
+            if (transaction.selling() && isStock) {
                 sharesOwned -= transaction.shares();
-            } else {
+            } else if (isStock) {
                 sharesOwned += transaction.shares();
             }
         }
@@ -51,7 +64,7 @@ public class Market {
         if (trader == null) {
             return 0;
         }
-        ArrayList<Transaction> relevantTransactions = getTransactionsForTrader(
+        ArrayList<Transaction> relevant = getTransactionsForTrader(
             traderId
         );
         double money = trader.initialMoney();
@@ -65,9 +78,7 @@ public class Market {
         return money;
     }
 
-    public static ArrayList<Transaction> getTransactionsForTrader(
-        int traderId
-    ) {
+    public static ArrayList<Transaction> getTransactionsForTrader(int traderId) {
         ArrayList<Transaction> out = new ArrayList<Transaction>();
         for (Transaction t : transactions) {
             if (t.traderId() == traderId) {
@@ -78,12 +89,7 @@ public class Market {
     }
 
     public static Trader getTraderById(int traderId) {
-        for (Trader t : traders) {
-            if (t.traderId() == traderId) {
-                return t;
-            }
-        }
-        return null;
+        return traders.get(traderId);
     }
 
     public static ArrayList<Stock> getStocks() {
