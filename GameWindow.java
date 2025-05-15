@@ -52,7 +52,6 @@ public class GameWindow {
             moneyBorder = BorderFactory.createTitledBorder("Money");
             moneyBorder.setTitleJustification(TitledBorder.CENTER);
             moneyAmountLabel.setBorder(moneyBorder);
-            moneyAmountLabel.setText("123");
             moneyAmountLabel.setPreferredSize(new Dimension(150, 50));
 
             tableScrollPane = new JScrollPane();
@@ -74,6 +73,8 @@ public class GameWindow {
             constraints.gridwidth = 3;
             constraints.gridheight = 2;
             this.add(tableScrollPane, constraints);
+
+            updatePortfolioInfo();
         }
 
         public void updatePortfolioInfo() {
@@ -146,6 +147,9 @@ public class GameWindow {
 
         public StockDisplayPanel() {
             super();
+            this.setLayout(new GridBagLayout());
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.insets = new Insets(10, 10, 10, 10);
         }
     }
 }
