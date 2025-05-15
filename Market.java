@@ -28,6 +28,29 @@ public class Market {
         return null;
     }
 
+    public static void sellShares(
+        int traderId,
+        int sharesAmount,
+        String stockName
+    ) throws NotEnoughMoneyException {
+        if (sharesAmount > getSharesOwnedInStock(traderId, stockName)) {
+            throw new NotEnoughMoneyException("");
+        }
+        Stock stock = getStockByTicker(stockName);
+        transactions.add(
+            new Transaction(
+                sharesAmount,
+                stock.getPrice(),
+                true,
+                traderId,
+                currentTransactionIndex,
+                day,
+                stock
+            )
+        );
+        currentTransactionIndex++;
+    }
+
     public static void buyShares(
         int traderId,
         int sharesAmount,
@@ -67,7 +90,7 @@ public class Market {
         return out;
     }
 
-    public static long sharesOwnedInStock(int traderId, Stock stock) {
+    public static long getSharesOwnedInStock(int traderId, String stockName) {
         Trader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
@@ -76,6 +99,7 @@ public class Market {
             traderId
         );
         long sharesOwned = 0;
+        Stock stock = getStockByTicker(stockName);
         for (Transaction transaction : relevantTransactions) {
             if (!transaction.stock().equals(stock)) {
                 continue;
