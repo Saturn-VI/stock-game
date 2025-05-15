@@ -173,7 +173,7 @@ public class GameWindow {
                 return null;
             }
 
-            public Class getColumnClass(int columnIndex) {
+            public Class<?> getColumnClass(int columnIndex) {
                 switch (columnIndex) {
                     case 0:
                         return String.class;
