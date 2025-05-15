@@ -6,12 +6,17 @@ public class Market {
     private static ArrayList<Transaction> transactions;
     private static ArrayList<Trader> traders;
 
+    private static long day;
+    private static long currentTransactionIndex;
+
     public static void initializeMarket() {
         // read in from checkpoint file
         stocks = DataReader.getStocks();
         // System.out.println(stocks);
         transactions = new ArrayList<Transaction>();
         traders = new ArrayList<Trader>();
+        day = 0;
+        currentTransactionIndex = 0;
     }
 
     public static Stock getStockByTicker(String ticker) {
@@ -23,11 +28,30 @@ public class Market {
         return null;
     }
 
-    /**
-     *
-     */
-    public static void buyShares(int traderId, int stockAmount)
-        throws NotEnoughMoneyException {}
+    public static void buyShares(
+        int traderId,
+        int sharesAmount,
+        String stockName
+    ) throws NotEnoughMoneyException {
+        double moneyAmount = getTraderMoneyAmount(traderId);
+        Stock stock = getStockByTicker(stockName);
+        double estimatedCost = sharesAmount * stock.getPrice();
+        if (estimatedCost > moneyAmount) {
+            throw new NotEnoughMoneyException("");
+        }
+        transactions.add(
+            new Transaction(
+                sharesAmount,
+                stock.getPrice(),
+                false,
+                traderId,
+                currentTransactionIndex,
+                day,
+                stock
+            )
+        );
+        currentTransactionIndex++;
+    }
 
     public static ArrayList<String> getListOfStocksForTrader(int traderId) {
         ArrayList<String> out = new ArrayList<String>();
@@ -76,9 +100,9 @@ public class Market {
         double money = trader.initialMoney();
         for (Transaction t : relevantTransactions) {
             if (t.selling()) {
-                money += t.shares() * t.marketPriceAtTimeOfTransaction();
+                money += t.shares() * t.price();
             } else {
-                money -= t.shares() * t.marketPriceAtTimeOfTransaction();
+                money -= t.shares() * t.price();
             }
         }
         return money;
