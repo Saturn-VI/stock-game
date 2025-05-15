@@ -4,7 +4,7 @@ public class Market {
 
     private static ArrayList<Stock> stocks;
     private static ArrayList<Transaction> transactions;
-    private static HashMap<Integer, AbstractTrader> traders;
+    private static ArrayList<AbstractTrader> traders;
     private static int day = 0;
 
     private static long day;
@@ -45,7 +45,6 @@ public class Market {
             day
         );
         transactions.add(tr);
-        trader.changeMoney(-1 * price);
     }
 
     public static void sellShares(int shares, Stock stock, int traderId)
@@ -61,11 +60,10 @@ public class Market {
             day
         );
         transactions.add(tr);
-        trader.changeMoney(price);
     }
 
     public static long sharesOwnedInStock(int traderId, Stock stock) {
-        Trader trader = getTraderById(traderId);
+        AbstractTrader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
         }
@@ -85,14 +83,14 @@ public class Market {
         return sharesOwned;
     }
 
-    public static double getTraderMoneyAmount(int traderId) {
-        Trader trader = getTraderById(traderId);
+    public static double getTraderMoney(int traderId) {
+        AbstractTrader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
         }
         ArrayList<Transaction> relevant = getTransactionsForTrader(traderId);
         double money = trader.initialMoney();
-        for (Transaction t : relevantTransactions) {
+        for (Transaction t : relevant) {
             if (t.selling()) {
                 money += t.shares() * t.price();
             } else {
@@ -114,8 +112,8 @@ public class Market {
         return out;
     }
 
-    public static Trader getTraderById(int traderId) {
-        return traders.get(traderId);
+    public static AbstractTrader getTraderById(int traderId) {
+        for (Trader t : traders) {}
     }
 
     public static ArrayList<Stock> getStocks() {
