@@ -2,6 +2,7 @@ import java.awt.*;
 import java.beans.Customizer;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.util.*;
 
 public class GameWindow {
 
@@ -53,8 +54,8 @@ public class GameWindow {
             }
 
             public int getRowCount() {
-                // TODO: Get the number of stocks that a trader has shares in
-                return 0;
+                ArrayList<String> names = Market.getListOfStocksForTrader(Main.playerTraderId);
+                return names.size();
             }
 
             public int getColumnCount() {
@@ -64,14 +65,6 @@ public class GameWindow {
             public Object getValueAt(int row, int col) {
                 // TODO
                 return null;
-            }
-
-            public boolean isCellEditable(int row, int col) {
-                return false;
-            }
-
-            public void setValueAt(Object value, int row, int col) {
-                // does nothing
             }
         }
     }
