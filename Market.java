@@ -132,12 +132,52 @@ public class Market {
         return money;
     }
 
+    public static double getCurrentTraderProfitOnStock(
+        int traderId,
+        String stockName
+    ) {
+        ArrayList<Transaction> relevantTransactions = getTransactionsForTrader(
+            traderId,
+            stockName
+        );
+        Stock stock = getStockByTicker(stockName);
+        double totalSpent = 0;
+        long sharesOwned = 0;
+        for (Transaction t : relevantTransactions) {
+            if (t.selling()) {
+                sharesOwned -= t.shares();
+                totalSpent -= t.price();
+            } else {
+                sharesOwned += t.shares();
+                totalSpent += t.price();
+            }
+        }
+        double currentHoldingValue = stock.getPrice() * sharesOwned;
+        return currentHoldingValue - totalSpent;
+    }
+
     public static ArrayList<Transaction> getTransactionsForTrader(
         int traderId
     ) {
         ArrayList<Transaction> out = new ArrayList<Transaction>();
         for (Transaction t : transactions) {
             if (t.traderId() == traderId) {
+                out.add(t);
+            }
+        }
+        return out;
+    }
+
+    public static ArrayList<Transaction> getTransactionsForTrader(
+        int traderId,
+        String stockName
+    ) {
+        ArrayList<Transaction> out = new ArrayList<Transaction>();
+        for (Transaction t : transactions) {
+            if (
+                t.traderId() == traderId &&
+                t.stock().getName().equals(stockName)
+            ) {
                 out.add(t);
             }
         }
