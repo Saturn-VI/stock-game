@@ -104,28 +104,32 @@ public class GameWindow {
 
             public void tableDataChanged() {
                 tableData.clear();
-                for (String stockName : Market.getListOfStocksForTrader(
+                ArrayList<String> ownedStocks = Market.getListOfStocksForTrader(
                     Main.playerTraderId
-                )) {
-                    Stock stock = Market.getStockByName(stockName);
-                    long howManyPlayerOwns = Market.getSharesOwnedInStock(
-                        Main.playerTraderId,
-                        stock.getName()
-                    );
-                    double currentProfit = Market.getCurrentTraderProfitOnStock(
-                        Main.playerTraderId,
-                        stockName
-                    );
-                    tableData.add(
-                        new TableStockInfo(
-                            stock.getName(),
-                            stock.getPrice(),
-                            howManyPlayerOwns,
-                            howManyPlayerOwns * stock.getPrice(),
-                            currentProfit
-                        )
-                    );
-                }
+                );
+                try {
+                    for (String stockName : ownedStocks) {
+                        Stock stock = Market.getStockByName(stockName);
+                        long howManyPlayerOwns = Market.getSharesOwnedInStock(
+                            Main.playerTraderId,
+                            stock.getName()
+                        );
+                        double currentProfit =
+                            Market.getCurrentTraderProfitOnStock(
+                                Main.playerTraderId,
+                                stockName
+                            );
+                        tableData.add(
+                            new TableStockInfo(
+                                stock.getName(),
+                                stock.getPrice(),
+                                howManyPlayerOwns,
+                                howManyPlayerOwns * stock.getPrice(),
+                                currentProfit
+                            )
+                        );
+                    }
+                } catch (StockDoesNotExistException e) {}
                 fireTableDataChanged();
             }
 

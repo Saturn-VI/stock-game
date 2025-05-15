@@ -1,17 +1,23 @@
-import java.util.ArrayList;
-
 public abstract class AbstractTrader {
 
-    private double money;
+    private final double initialMoney;
     private final int traderId;
 
     public AbstractTrader(int traderId) {
-        money = 0.0;
+        initialMoney = 10000;
         this.traderId = traderId;
     }
 
     public AbstractTrader(int traderId, double money) {
-        this.money = money;
+        this.initialMoney = money;
         this.traderId = traderId;
+    }
+
+    public double getInitialMoney() {
+        return initialMoney;
+    }
+
+    public int getTraderId() {
+        return traderId;
     }
 }
