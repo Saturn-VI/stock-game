@@ -103,8 +103,29 @@ public class GameWindow {
             };
 
             public void tableDataChanged() {
-                // TODO
-                // Update tableData
+                tableData.clear();
+                for (String stockName : Market.getListOfStocksForTrader(
+                    Main.playerTraderId
+                )) {
+                    Stock stock = Market.getStockByName(stockName);
+                    long howManyPlayerOwns = Market.getSharesOwnedInStock(
+                        Main.playerTraderId,
+                        stock.getName()
+                    );
+                    double currentProfit = Market.getCurrentTraderProfitOnStock(
+                        Main.playerTraderId,
+                        stockName
+                    );
+                    tableData.add(
+                        new TableStockInfo(
+                            stock.getName(),
+                            stock.getPrice(),
+                            howManyPlayerOwns,
+                            howManyPlayerOwns * stock.getPrice(),
+                            currentProfit
+                        )
+                    );
+                }
                 fireTableDataChanged();
             }
 

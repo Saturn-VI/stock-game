@@ -19,9 +19,9 @@ public class Market {
         currentTransactionIndex = 0;
     }
 
-    public static Stock getStockByTicker(String ticker) {
+    public static Stock getStockByName(String stockName) {
         for (Stock stock : getStocks()) {
-            if (stock.getSymbol().equals(ticker)) {
+            if (stock.getSymbol().equals(stockName)) {
                 return stock;
             }
         }
@@ -36,7 +36,7 @@ public class Market {
         if (sharesAmount > getSharesOwnedInStock(traderId, stockName)) {
             throw new NotEnoughMoneyException("");
         }
-        Stock stock = getStockByTicker(stockName);
+        Stock stock = getStockByName(stockName);
         transactions.add(
             new Transaction(
                 sharesAmount,
@@ -57,7 +57,7 @@ public class Market {
         String stockName
     ) throws NotEnoughMoneyException {
         double moneyAmount = getTraderMoneyAmount(traderId);
-        Stock stock = getStockByTicker(stockName);
+        Stock stock = getStockByName(stockName);
         double estimatedCost = sharesAmount * stock.getPrice();
         if (estimatedCost > moneyAmount) {
             throw new NotEnoughMoneyException("");
@@ -99,7 +99,7 @@ public class Market {
             traderId
         );
         long sharesOwned = 0;
-        Stock stock = getStockByTicker(stockName);
+        Stock stock = getStockByName(stockName);
         for (Transaction transaction : relevantTransactions) {
             if (!transaction.stock().equals(stock)) {
                 continue;
@@ -140,7 +140,7 @@ public class Market {
             traderId,
             stockName
         );
-        Stock stock = getStockByTicker(stockName);
+        Stock stock = getStockByName(stockName);
         double totalSpent = 0;
         long sharesOwned = 0;
         for (Transaction t : relevantTransactions) {
