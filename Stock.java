@@ -6,7 +6,7 @@ public class Stock {
 	private final long totalShares; // total shares that exist for this stock - this is not changed, just used to give more weight to certain stock movements
 
 	public Stock(String symbol, double price, long totalShares, String name) {
-	  this.symbol = symbol;
+	    this.symbol = symbol;
 		this.price = price;
 		this.totalShares = totalShares;
 		this.name = name;
@@ -32,7 +32,7 @@ public class Stock {
 		return price * totalShares;
 	}
 
- @Override
+    @Override
 	public boolean equals(Object obj) {
 	    if (obj instanceof Stock) {
 			Stock s = (Stock) obj;
@@ -44,7 +44,7 @@ public class Stock {
 		return false;
 	}
 
- @Override
+    @Override
 	public String toString() {
 	    return String.format("%s $%.2f", symbol, price);
 	}

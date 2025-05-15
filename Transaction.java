@@ -11,6 +11,5 @@ public record Transaction(
     int traderId,
     long transactionIndex,
     long timeTransactionMade,
-    double marketPriceAtTimeOfTransaction,
     Stock stock
 ) {}
