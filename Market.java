@@ -117,6 +117,7 @@ public class Market {
                 out.add(t.stock().getName());
             }
         }
+        Collections.sort(out, String.CASE_INSENSITIVE_ORDER);
         return out;
     }
 

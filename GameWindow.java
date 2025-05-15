@@ -146,24 +146,47 @@ public class GameWindow {
             }
 
             public Object getValueAt(int row, int col) {
+                // Keep in mind that the list of stocks is alphabetical
                 switch (col) {
                     case 0:
                         // Name
+                        tableData.get(row).stockSymbol();
                         break;
                     case 1:
                         // Price
+                        tableData.get(row).stockPrice();
                         break;
                     case 2:
                         // Shares Owned
+                        tableData.get(row).sharesOwned();
                         break;
                     case 3:
                         // Holding Value
+                        tableData.get(row).holdingValue();
                         break;
                     case 4:
                         // Current Profit
+                        tableData.get(row).currentProfit();
                         break;
                 }
+                // Should never happen
                 return null;
+            }
+
+            public Class getColumnClass(int columnIndex) {
+                switch (columnIndex) {
+                    case 0:
+                        return String.class;
+                    case 1:
+                        return Double.class;
+                    case 2:
+                        return Long.class;
+                    case 3:
+                        return Double.class;
+                    case 4:
+                        return Double.class;
+                }
+                return Object.class;
             }
         }
     }
