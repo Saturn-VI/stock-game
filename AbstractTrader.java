@@ -15,6 +15,10 @@ public abstract class AbstractTrader {
         this.traderId = traderId;
     }
 
+    public int getId() {
+        return traderId;
+    }
+
     public double initialMoney() {
         return initialMoney;
     }
