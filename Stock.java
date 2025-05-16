@@ -31,8 +31,15 @@ public class Stock {
         addPriceToHistory(newPrice);
     }
 
+    public double getPriceByDay(int day) throws DayDoesNotExistException {
+        if (day >= prices.size()) {
+            throw new DayDoesNotExistException("");
+        }
+        return prices.get(day);
+    }
+    
     public double getPrice() {
-        return prices.getLast();
+        return prices.get(prices.size()-1);
     }
 
     public long getTotalShares() {

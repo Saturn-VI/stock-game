@@ -44,6 +44,10 @@ public class Market {
      * HELPER METHODS
      */
 
+    public static void addTrader(AbstractTrader trader) {
+        traders.add(trader);
+    }
+
     public static Stock getStockByTicker(String ticker) {
         for (Stock stock : getStocks()) {
             if (stock.getSymbol().equals(ticker)) {
@@ -143,7 +147,7 @@ public class Market {
             traderId,
             copyTransactions()
         );
-        double money = trader.initialMoney();
+        double money = trader.getInitialMoney();
         for (Transaction t : relevant) {
             if (t.selling()) {
                 money += (double) t.shares() * t.price();
@@ -156,7 +160,7 @@ public class Market {
 
     public static AbstractTrader getTraderById(int traderId) {
         for (AbstractTrader t : traders) {
-            if (t.getId() == traderId) return t;
+            if (t.getTraderId() == traderId) return t;
         }
         return null;
     }
@@ -253,6 +257,25 @@ public class Market {
             }
         }
         return trs;
+    }
+
+    public static ArrayList<String> getListOfStocksForTrader(int traderId) {
+        ArrayList<String> out = new ArrayList<String>();
+        for (Transaction transaction : copyTransactions()) {
+            if (transaction.traderId() == traderId) {
+                if (!out.contains(transaction.stock().getSymbol())) {
+                    out.add(transaction.stock().getSymbol());
+                }
+            }
+        }
+        for (int i = out.size() - 1; i >= 0; i--) {
+            try {
+                if (getSharesOwnedInStock(traderId, out.get(i)) <= 0) {
+                    out.remove(i);
+                }
+            } catch (StockDoesNotExistException e) {}
+        }
+        return out;
     }
 
     // removes every transaction that is older than days
