@@ -17,7 +17,7 @@ public class DataReader {
             String symbol = scan.next();
             double price = scan.nextDouble();
             long totalShares = scan.nextLong();
-            String name = scan.nextLine();
+            String name = scan.nextLine().strip();
             stocks.add(new Stock(symbol, price, totalShares, name));
         }
         scan.close();
