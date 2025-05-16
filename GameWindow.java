@@ -1,15 +1,15 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
-import java.text.*;
 
 public class GameWindow {
 
     private JFrame gameFrame;
-    private JPanel stockDisplayPanel, portfolioPanel;
+    private JPanel homePanel, stockDisplayPanel, portfolioPanel;
     private JTabbedPane tabbedPane;
 
     public GameWindow() {
@@ -20,37 +20,43 @@ public class GameWindow {
         gameFrame = new JFrame();
         gameFrame.setLayout(new BorderLayout());
 
+        homePanel = new HomePanel();
         stockDisplayPanel = new StockDisplayPanel();
         portfolioPanel = new PortfolioPanel();
 
         tabbedPane = new JTabbedPane();
-
-        tabbedPane.addTab("View stock", stockDisplayPanel);
-        tabbedPane.addTab("Portfolio", portfolioPanel);
-        tabbedPane.setTabComponentAt(0, new JLabel("", SwingConstants.CENTER));
-        tabbedPane.setTabComponentAt(1, new JLabel("", SwingConstants.CENTER));
+        String[] tabNames = { "Home", "View stock", "Portfolio" };
+        JPanel[] tabPanels = { homePanel, stockDisplayPanel, portfolioPanel };
         Font tabFont = FontFactory.getFont("Bold", 18);
 
-        JLabel stockLabel = (JLabel) tabbedPane.getTabComponentAt(0);
-        stockLabel.setText("View stock");
-        stockLabel.setFont(tabFont);
-        stockLabel.setPreferredSize(new Dimension(200, 30));
-
-        JLabel portfolioLabel = (JLabel) tabbedPane.getTabComponentAt(1);
-        portfolioLabel.setText("Portfolio");
-        portfolioLabel.setFont(tabFont);
-        portfolioLabel.setPreferredSize(new Dimension(200, 30));
+        for (int i = 0; i < 3; i++) {
+            tabbedPane.addTab("", tabPanels[i]);
+            tabbedPane.setTabComponentAt(
+                i,
+                new JLabel("", SwingConstants.CENTER)
+            );
+            JLabel tabLabel = (JLabel) tabbedPane.getTabComponentAt(i);
+            tabLabel.setText(tabNames[i]);
+            tabLabel.setFont(tabFont);
+            tabLabel.setPreferredSize(new Dimension(200, 30));
+        }
 
         gameFrame.add(tabbedPane);
 
         gameFrame.setSize(1200, 1200);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.pack();
-        gameFrame.setMinimumSize(new Dimension((int) (gameFrame.getSize().getWidth() * 1.05), (int) (gameFrame.getSize().getHeight() * 1.05)));
+        gameFrame.setMinimumSize(
+            new Dimension(
+                (int) (gameFrame.getSize().getWidth() * 1.1),
+                (int) (gameFrame.getSize().getHeight() * 1.1)
+            )
+        );
         gameFrame.setVisible(true);
     }
 
     class BaseFontCellRenderer extends DefaultTableCellRenderer {
+
         private final Font cellFont = FontFactory.getFont("Medium", 14);
 
         public BaseFontCellRenderer(boolean alignToRight) {
@@ -64,8 +70,22 @@ public class GameWindow {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        public Component getTableCellRendererComponent(
+            JTable table,
+            Object value,
+            boolean isSelected,
+            boolean hasFocus,
+            int row,
+            int column
+        ) {
+            Component c = super.getTableCellRendererComponent(
+                table,
+                value,
+                isSelected,
+                hasFocus,
+                row,
+                column
+            );
             if (cellFont != null) {
                 c.setFont(cellFont);
             }
@@ -74,6 +94,7 @@ public class GameWindow {
     }
 
     class CurrencyTableCellRenderer extends BaseFontCellRenderer {
+
         private boolean colorize;
         private DecimalFormat currencyFormat = new DecimalFormat("$#,##0.00");
 
@@ -83,8 +104,22 @@ public class GameWindow {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        public Component getTableCellRendererComponent(
+            JTable table,
+            Object value,
+            boolean isSelected,
+            boolean hasFocus,
+            int row,
+            int column
+        ) {
+            Component c = super.getTableCellRendererComponent(
+                table,
+                value,
+                isSelected,
+                hasFocus,
+                row,
+                column
+            );
 
             if (value instanceof Number) {
                 setText(currencyFormat.format(value));
@@ -106,6 +141,16 @@ public class GameWindow {
             }
 
             return c;
+        }
+    }
+
+    class HomePanel extends JPanel {
+
+        public HomePanel() {
+            super();
+            this.setLayout(new GridBagLayout());
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.insets = new Insets(10, 10, 10, 10);
         }
     }
 
@@ -136,15 +181,30 @@ public class GameWindow {
 
             // Set custom renderers for columns
             // column 0: Name (regular, left align)
-            stockInfoTable.getColumnModel().getColumn(0).setCellRenderer(new BaseFontCellRenderer(false));
+            stockInfoTable
+                .getColumnModel()
+                .getColumn(0)
+                .setCellRenderer(new BaseFontCellRenderer(false));
             // column 1: Price (no color)
-            stockInfoTable.getColumnModel().getColumn(1).setCellRenderer(new CurrencyTableCellRenderer(false));
+            stockInfoTable
+                .getColumnModel()
+                .getColumn(1)
+                .setCellRenderer(new CurrencyTableCellRenderer(false));
             // column 2: Shares Owned (no color, right align)
-            stockInfoTable.getColumnModel().getColumn(2).setCellRenderer(new BaseFontCellRenderer(true));
+            stockInfoTable
+                .getColumnModel()
+                .getColumn(2)
+                .setCellRenderer(new BaseFontCellRenderer(true));
             // column 3: Holding Value (no color)
-            stockInfoTable.getColumnModel().getColumn(3).setCellRenderer(new CurrencyTableCellRenderer(false));
+            stockInfoTable
+                .getColumnModel()
+                .getColumn(3)
+                .setCellRenderer(new CurrencyTableCellRenderer(false));
             // column 4: Current Profit (coloring)
-            stockInfoTable.getColumnModel().getColumn(4).setCellRenderer(new CurrencyTableCellRenderer(true));
+            stockInfoTable
+                .getColumnModel()
+                .getColumn(4)
+                .setCellRenderer(new CurrencyTableCellRenderer(true));
 
             JTableHeader tableHeader = stockInfoTable.getTableHeader();
             Font headerFont = FontFactory.getFont("SemiBold", 16);
@@ -152,26 +212,38 @@ public class GameWindow {
                 tableHeader.setFont(headerFont);
             }
 
-            stockInfoTable.setPreferredScrollableViewportSize(new Dimension(800, 20));
+            stockInfoTable.setPreferredScrollableViewportSize(
+                new Dimension(800, 20)
+            );
             stockInfoTable.setFillsViewportHeight(true);
-            stockInfoTable.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 2) {
-                        JTable target = (JTable)e.getSource();
-                        int row = target.rowAtPoint(e.getPoint());
-                        int column = target.columnAtPoint(e.getPoint());
+            stockInfoTable.addMouseListener(
+                new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 2) {
+                            JTable target = (JTable) e.getSource();
+                            int row = target.rowAtPoint(e.getPoint());
+                            int column = target.columnAtPoint(e.getPoint());
 
-                        if (row != -1 && column != -1) {
-                            System.out.println("Clicked on cell: (" + row + ", " + column + ")");
-                            System.out.println("Cell value: " + stockInfoTable.getValueAt(row, column));
+                            if (row != -1 && column != -1) {
+                                System.out.println(
+                                    "Clicked on cell: (" +
+                                    row +
+                                    ", " +
+                                    column +
+                                    ")"
+                                );
+                                System.out.println(
+                                    "Cell value: " +
+                                    stockInfoTable.getValueAt(row, column)
+                                );
+                            }
                         }
                     }
                 }
-            });
+            );
 
             tableScrollPane = new JScrollPane(stockInfoTable);
             tableScrollPane.setPreferredSize(new Dimension(800, 200));
-
 
             constraints.gridx = 2;
             constraints.gridy = 0;
@@ -191,7 +263,10 @@ public class GameWindow {
 
         public void updatePortfolioInfo() {
             moneyAmountLabel.setText(
-                String.format("$%.2f", Market.getTraderMoneyAmount(Main.playerTraderId))
+                String.format(
+                    "$%.2f",
+                    Market.getTraderMoneyAmount(Main.playerTraderId)
+                )
             );
             CustomTableModel tableModel =
                 ((CustomTableModel) stockInfoTable.getModel());
@@ -233,7 +308,10 @@ public class GameWindow {
                             );
                         tableData.add(
                             new TableStockInfo(
-                                stock.getName() + " (" + stock.getSymbol() + ")",
+                                stock.getName() +
+                                " (" +
+                                stock.getSymbol() +
+                                ")",
                                 stock.getPrice(),
                                 howManyPlayerOwns,
                                 howManyPlayerOwns * stock.getPrice(),

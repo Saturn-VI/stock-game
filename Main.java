@@ -20,7 +20,6 @@ public class Main {
             stock.setPrice(stock.getPrice() - 5);
             Market.buyShares(playerTraderId, 5, "TSLA");
             stock.setPrice(stock.getPrice() + 5);
-            stock.setPrice(stock.getPrice() - 2.5);
         } catch (NotEnoughMoneyException e) {
             System.out.println("Not enough money to buy shares.");
         }
