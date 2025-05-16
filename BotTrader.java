@@ -8,4 +8,6 @@ public class BotTrader extends AbstractTrader {
     super(traderId, money);
   }
 
+  
+
 }

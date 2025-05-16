@@ -17,6 +17,11 @@ public class Market {
         traders = new ArrayList<AbstractTrader>();
         currentDay = 0;
         currentTransactionIndex = 0;
+
+        traders.add(new PlayerTrader(0));
+        for (int i=1; i<10; i++) {
+            traders.add(new BotTrader(i));
+        }
     }
 
     public void simulateMarketDay() {
