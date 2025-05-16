@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -73,7 +74,6 @@ public class GameWindow {
             tableScrollPane.setPreferredSize(new Dimension(800, 200));
             stockInfoTable = new JTable(new CustomTableModel());
 
-            // Get the table header and set its font
             JTableHeader tableHeader = stockInfoTable.getTableHeader();
             Font headerFont = FontFactory.getFont("SemiBold", 16);
             if (headerFont != null) {
@@ -82,6 +82,20 @@ public class GameWindow {
 
             stockInfoTable.setPreferredScrollableViewportSize(new Dimension(800, 20));
             stockInfoTable.setFillsViewportHeight(true);
+            stockInfoTable.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        JTable target = (JTable)e.getSource();
+                        int row = target.rowAtPoint(e.getPoint());
+                        int column = target.columnAtPoint(e.getPoint());
+
+                        if (row != -1 && column != -1) {
+                            System.out.println("Clicked on cell: (" + row + ", " + column + ")");
+                            System.out.println("Cell value: " + stockInfoTable.getValueAt(row, column));
+                        }
+                    }
+                }
+            });
             tableScrollPane.setViewportView(stockInfoTable);
 
             constraints.gridx = 2;
@@ -153,6 +167,7 @@ public class GameWindow {
                         );
                     }
                 } catch (StockDoesNotExistException e) {}
+                System.out.println(tableData);
                 fireTableDataChanged();
             }
 
@@ -173,24 +188,19 @@ public class GameWindow {
                 switch (col) {
                     case 0:
                         // Name
-                        tableData.get(row).stockSymbol();
-                        break;
+                        return tableData.get(row).stockSymbol();
                     case 1:
                         // Price
-                        tableData.get(row).stockPrice();
-                        break;
+                        return tableData.get(row).stockPrice();
                     case 2:
                         // Shares Owned
-                        tableData.get(row).sharesOwned();
-                        break;
+                        return tableData.get(row).sharesOwned();
                     case 3:
                         // Holding Value
-                        tableData.get(row).holdingValue();
-                        break;
+                        return tableData.get(row).holdingValue();
                     case 4:
                         // Current Profit
-                        tableData.get(row).currentProfit();
-                        break;
+                        return tableData.get(row).currentProfit();
                 }
                 // Should never happen
                 return null;
