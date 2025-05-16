@@ -23,6 +23,7 @@ public class Market {
         ArrayList<Transaction> trs = copyTransactions();
         ArrayList<Integer> shareExchangeList = new ArrayList<>();
         int totalShareExchange = 0;
+        double marketSentiment = 0; 
 
         for (Stock stock : stocks) {
             filterByStock(stock.getSymbol(), trs);
@@ -33,16 +34,27 @@ public class Market {
                 if (tr.selling()) netShares -= tr.shares();
                 else netShares += tr.shares();
             }
+
+            // extremely basic algorithm that takes in a sentiment
+            // based on what the net share is
+            // and makes it a bit random
+            // and then changes the stock price accordingly
+
+            // NOTE: IF HAVE TIME, MAKE THE ALGORITHM
+            // A BIT MORE ADVANCED BY CONSIDERING
+            // OVERALL MARKET SENTIMENT
+            
+            double rawSentiment = (double) netShares / ((double) stock.getTotalShares() / 10000000);
+            double sentiment = rawSentiment * (0.95 + Math.random()/10);
+            stock.setPrice(stock.getPrice() * sentiment);
+            
             shareExchangeList.add(netShares);
         }
 
-        for (int i : shareExchangeList) totalShareExchange += i;
-        double sentiment = Math.random();
+        currentDay++;
     }
 
-    /**
-     * HELPER METHODS
-     */
+    // HELPER METHODS
 
     public static void addTrader(AbstractTrader trader) {
         traders.add(trader);

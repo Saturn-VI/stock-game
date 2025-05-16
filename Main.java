@@ -8,7 +8,7 @@ public class Main {
         Market.initializeMarket();
         DataReader.getStocks();
         runMarketTests();
-        SwingUtilities.invokeLater(() -> new GameWindow());
+        //SwingUtilities.invokeLater(() -> new GameWindow());
     }
 
     public static void runMarketTests() {
