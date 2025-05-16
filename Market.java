@@ -19,14 +19,12 @@ public class Market {
         currentTransactionIndex = 0;
     }
 
-
     public void simulateMarketDay() {
         ArrayList<Transaction> trs = copyTransactions();
         ArrayList<Integer> shareExchangeList = new ArrayList<>();
         int totalShareExchange = 0;
 
         for (Stock stock : stocks) {
-
             filterByStock(stock.getSymbol(), trs);
             filterByDays(5, trs);
 
@@ -36,19 +34,15 @@ public class Market {
                 else netShares += tr.shares();
             }
             shareExchangeList.add(netShares);
-
         }
 
         for (int i : shareExchangeList) totalShareExchange += i;
         double sentiment = Math.random();
-
-
     }
 
     /**
      * HELPER METHODS
      */
-
 
     public static Stock getStockByTicker(String ticker) {
         for (Stock stock : getStocks()) {
@@ -116,7 +110,10 @@ public class Market {
         if (trader == null) {
             return 0;
         }
-        ArrayList<Transaction> relevantTransactions = filterByTrader(traderId, copyTransactions());
+        ArrayList<Transaction> relevantTransactions = filterByTrader(
+            traderId,
+            copyTransactions()
+        );
         long sharesOwned = 0;
         Stock stock = getStockByName(stockName);
         if (stock == null) {
@@ -142,7 +139,10 @@ public class Market {
         if (trader == null) {
             return 0;
         }
-        ArrayList<Transaction> relevant = filterByTrader(traderId, copyTransactions());
+        ArrayList<Transaction> relevant = filterByTrader(
+            traderId,
+            copyTransactions()
+        );
         double money = trader.initialMoney();
         for (Transaction t : relevant) {
             if (t.selling()) {
@@ -157,6 +157,10 @@ public class Market {
     public static AbstractTrader getTraderById(int traderId) {
         for (AbstractTrader t : traders) {
             if (t.getId() == traderId) return t;
+        }
+        return null;
+    }
+
     public static double getCurrentTraderProfitOnStock(
         int traderId,
         String stockName
@@ -235,9 +239,12 @@ public class Market {
         return (ArrayList<Transaction>) transactions.clone();
     }
 
-    public static ArrayList<Transaction> filterByStock(String stockName, ArrayList<Transaction> trs) {
+    public static ArrayList<Transaction> filterByStock(
+        String stockName,
+        ArrayList<Transaction> trs
+    ) {
         Stock stock = getStockByTicker(stockName);
-        for (int i=trs.size()-1; i>=0; i--) {
+        for (int i = trs.size() - 1; i >= 0; i--) {
             if (!trs.get(i).stock().equals(stockName)) {
                 trs.remove(i);
             }
@@ -245,8 +252,11 @@ public class Market {
         return trs;
     }
 
-    public static ArrayList<Transaction> filterByTrader(int traderId, ArrayList<Transaction> trs) {
-        for (int i=trs.size()-1; i>=0; i--) {
+    public static ArrayList<Transaction> filterByTrader(
+        int traderId,
+        ArrayList<Transaction> trs
+    ) {
+        for (int i = trs.size() - 1; i >= 0; i--) {
             if (trs.get(i).traderId() != traderId) {
                 trs.remove(i);
             }
@@ -255,14 +265,15 @@ public class Market {
     }
 
     // removes every transaction that is older than days
-    public static ArrayList<Transaction> filterByDays(int days, ArrayList<Transaction> trs) {
-        for (int i=trs.size()-1; i>=0; i--) {
+    public static ArrayList<Transaction> filterByDays(
+        int days,
+        ArrayList<Transaction> trs
+    ) {
+        for (int i = trs.size() - 1; i >= 0; i--) {
             if (trs.get(i).dayTransactionMade() < currentDay - days) {
                 trs.remove(i);
             }
         }
         return trs;
     }
-
-
 }
