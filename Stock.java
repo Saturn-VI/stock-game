@@ -23,8 +23,12 @@ public class Stock {
         return name;
     }
 
-    public void addPriceToHistory(double newPrice) {
+    private void addPriceToHistory(double newPrice) {
         this.prices.add(newPrice);
+    }
+
+    public void setPrice(double newPrice) {
+        addPriceToHistory(newPrice);
     }
 
     public double getPrice() {

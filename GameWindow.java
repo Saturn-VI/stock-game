@@ -4,6 +4,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
+import java.text.*;
 
 public class GameWindow {
 
@@ -49,6 +50,43 @@ public class GameWindow {
         gameFrame.setVisible(true);
     }
 
+    // Custom TableCellRenderer for currency values
+    class CurrencyTableCellRenderer extends DefaultTableCellRenderer {
+        private boolean colorize;
+        private DecimalFormat currencyFormat = new DecimalFormat("$#,##0.00");
+
+        public CurrencyTableCellRenderer(boolean colorize) {
+            this.colorize = colorize;
+            setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (value instanceof Number) {
+                setText(currencyFormat.format(value));
+            } else {
+                setText("$" + value.toString());
+            }
+
+            if (colorize && value instanceof Number) {
+                double doubleValue = ((Number) value).doubleValue();
+                if (doubleValue > 0) {
+                    c.setForeground(Color.GREEN.darker());
+                } else if (doubleValue < 0) {
+                    c.setForeground(Color.RED);
+                } else {
+                    c.setForeground(UIManager.getColor("Label.foreground"));
+                }
+            } else {
+                c.setForeground(UIManager.getColor("Label.foreground"));
+            }
+
+            return c;
+        }
+    }
+
     class PortfolioPanel extends JPanel {
 
         private JLabel moneyAmountLabel;
@@ -74,6 +112,15 @@ public class GameWindow {
             tableScrollPane.setPreferredSize(new Dimension(800, 200));
             stockInfoTable = new JTable(new CustomTableModel());
 
+            // Set custom renderers for currency columns
+            // Column 1: Price (No coloring)
+            stockInfoTable.getColumnModel().getColumn(1).setCellRenderer(new CurrencyTableCellRenderer(false));
+            // Column 3: Holding Value (No coloring)
+            stockInfoTable.getColumnModel().getColumn(3).setCellRenderer(new CurrencyTableCellRenderer(false));
+            // Column 4: Current Profit (With coloring)
+            stockInfoTable.getColumnModel().getColumn(4).setCellRenderer(new CurrencyTableCellRenderer(true));
+
+
             JTableHeader tableHeader = stockInfoTable.getTableHeader();
             Font headerFont = FontFactory.getFont("SemiBold", 16);
             if (headerFont != null) {
@@ -96,7 +143,10 @@ public class GameWindow {
                     }
                 }
             });
-            tableScrollPane.setViewportView(stockInfoTable);
+
+            tableScrollPane = new JScrollPane(stockInfoTable); // Use stockInfoTable directly here
+            tableScrollPane.setPreferredSize(new Dimension(800, 200));
+
 
             constraints.gridx = 2;
             constraints.gridy = 0;
