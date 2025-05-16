@@ -25,3 +25,10 @@ class StockDoesNotExistException extends Exception {
         super(m);
     }
 }
+
+class DayDoesNotExistException extends Exception {
+
+    public DayDoesNotExistException(String m) {
+        super(m);
+    }
+}

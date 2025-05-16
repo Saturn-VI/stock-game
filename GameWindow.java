@@ -304,7 +304,7 @@ public class GameWindow {
                 );
                 try {
                     for (String stockName : ownedStocks) {
-                        Stock stock = Market.getStockByName(stockName);
+                        Stock stock = Market.getStockByTicker(stockName);
                         long howManyPlayerOwns = Market.getSharesOwnedInStock(
                             Main.playerTraderId,
                             stock.getSymbol()
