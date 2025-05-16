@@ -113,13 +113,12 @@ public class GameWindow {
             stockInfoTable = new JTable(new CustomTableModel());
 
             // Set custom renderers for currency columns
-            // Column 1: Price (No coloring)
+            // column 1: Price (no color)
             stockInfoTable.getColumnModel().getColumn(1).setCellRenderer(new CurrencyTableCellRenderer(false));
-            // Column 3: Holding Value (No coloring)
+            // column 3: Holding Value (no color)
             stockInfoTable.getColumnModel().getColumn(3).setCellRenderer(new CurrencyTableCellRenderer(false));
-            // Column 4: Current Profit (With coloring)
+            // column 4: Current Profit (coloring)
             stockInfoTable.getColumnModel().getColumn(4).setCellRenderer(new CurrencyTableCellRenderer(true));
-
 
             JTableHeader tableHeader = stockInfoTable.getTableHeader();
             Font headerFont = FontFactory.getFont("SemiBold", 16);
