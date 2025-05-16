@@ -9,7 +9,9 @@ import javax.swing.table.*;
 public class GameWindow {
 
     private JFrame gameFrame;
-    private JPanel homePanel, stockDisplayPanel, portfolioPanel;
+    private HomePanel homePanel;
+    private StockDisplayPanel stockDisplayPanel;
+    private PortfolioPanel portfolioPanel;
     private JTabbedPane tabbedPane;
 
     public GameWindow() {
@@ -31,11 +33,8 @@ public class GameWindow {
 
         for (int i = 0; i < 3; i++) {
             tabbedPane.addTab("", tabPanels[i]);
-            tabbedPane.setTabComponentAt(
-                i,
-                new JLabel("", SwingConstants.CENTER)
-            );
-            JLabel tabLabel = (JLabel) tabbedPane.getTabComponentAt(i);
+            JLabel tabLabel = new JLabel("", SwingConstants.CENTER);
+            tabbedPane.setTabComponentAt(i, tabLabel);
             tabLabel.setText(tabNames[i]);
             tabLabel.setFont(tabFont);
             tabLabel.setPreferredSize(new Dimension(200, 30));
@@ -53,6 +52,15 @@ public class GameWindow {
             )
         );
         gameFrame.setVisible(true);
+    }
+
+    public void goToStockDisplayPanel(String stock) {
+        tabbedPane.setSelectedIndex(1);
+        stockDisplayPanel.setViewStock(stock);
+    }
+
+    public void updatePortfolioInfo() {
+        portfolioPanel.updatePortfolioInfo();
     }
 
     class BaseFontCellRenderer extends DefaultTableCellRenderer {
@@ -308,10 +316,8 @@ public class GameWindow {
                             );
                         tableData.add(
                             new TableStockInfo(
-                                stock.getName() +
-                                " (" +
-                                stock.getSymbol() +
-                                ")",
+                                stock.getName(),
+                                stock.getSymbol(),
                                 stock.getPrice(),
                                 howManyPlayerOwns,
                                 howManyPlayerOwns * stock.getPrice(),
@@ -341,7 +347,11 @@ public class GameWindow {
                 switch (col) {
                     case 0:
                         // Name
-                        return tableData.get(row).stockSymbol();
+                        return String.format(
+                            "%s (%s)",
+                            tableData.get(row).stockName(),
+                            tableData.get(row).stockSymbol()
+                        );
                     case 1:
                         // Price
                         return tableData.get(row).stockPrice();
@@ -384,6 +394,12 @@ public class GameWindow {
             this.setLayout(new GridBagLayout());
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.insets = new Insets(10, 10, 10, 10);
+        }
+
+        public void setViewStock(String stockName) {
+            // TODO
+            // Takes a stock symbol (String) and sets the data to show this stock
+
         }
     }
 }
