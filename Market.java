@@ -19,6 +19,10 @@ public class Market {
         currentTransactionIndex = 0;
     }
 
+    public static void addTrader(AbstractTrader t) {
+        traders.add(t);
+    }
+
     public static Stock getStockByName(String stockName) {
         for (Stock stock : getStocks()) {
             if (stock.getSymbol().equals(stockName)) {
@@ -112,9 +116,9 @@ public class Market {
         ArrayList<String> out = new ArrayList<String>();
         for (Transaction t : transactions) {
             if (
-                t.traderId() == traderId && !out.contains(t.stock().getName())
+                t.traderId() == traderId && !out.contains(t.stock().getSymbol())
             ) {
-                out.add(t.stock().getName());
+                out.add(t.stock().getSymbol());
             }
         }
         Collections.sort(out, String.CASE_INSENSITIVE_ORDER);

@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -56,10 +57,10 @@ public class GameWindow {
 
             tableScrollPane = new JScrollPane();
             tableScrollPane.setPreferredSize(new Dimension(400, 100));
-            stockInfoTable = new JTable();
             stockInfoTable = new JTable(new CustomTableModel());
+            stockInfoTable.setPreferredScrollableViewportSize(new Dimension(400, 10));
             stockInfoTable.setFillsViewportHeight(true);
-            tableScrollPane.add(stockInfoTable);
+            tableScrollPane.setViewportView(stockInfoTable);
 
             constraints.gridx = 2;
             constraints.gridy = 0;
@@ -112,7 +113,7 @@ public class GameWindow {
                         Stock stock = Market.getStockByName(stockName);
                         long howManyPlayerOwns = Market.getSharesOwnedInStock(
                             Main.playerTraderId,
-                            stock.getName()
+                            stock.getSymbol()
                         );
                         double currentProfit =
                             Market.getCurrentTraderProfitOnStock(
@@ -121,7 +122,7 @@ public class GameWindow {
                             );
                         tableData.add(
                             new TableStockInfo(
-                                stock.getName(),
+                                stock.getName() + " (" + stock.getSymbol() + ")",
                                 stock.getPrice(),
                                 howManyPlayerOwns,
                                 howManyPlayerOwns * stock.getPrice(),
