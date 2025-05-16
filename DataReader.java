@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class DataReader {
+
     public static ArrayList<Stock> getStocks() {
         ArrayList<Stock> stocks = new ArrayList<Stock>();
         Scanner scan;
         try {
-            scan = new Scanner(new File("data.dat"));
+            scan = new Scanner(new File("data.dat"), "UTF-8");
         } catch (FileNotFoundException exception) {
             return new ArrayList<Stock>(); // return empty ArrayList if data file not found
         }
