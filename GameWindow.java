@@ -19,7 +19,7 @@ public class GameWindow {
     }
 
     private void setupGameFrame() {
-        gameFrame = new JFrame();
+        gameFrame = new JFrame("TradeMaster 2000");
         gameFrame.setLayout(new BorderLayout());
 
         homePanel = new HomePanel();
