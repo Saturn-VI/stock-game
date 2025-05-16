@@ -5,27 +5,52 @@ public class Market {
     private static ArrayList<Stock> stocks;
     private static ArrayList<Transaction> transactions;
     private static ArrayList<AbstractTrader> traders;
-    private static int day = 0;
 
+    private static long currentDay;
     private static long currentTransactionIndex;
 
     public static void initializeMarket() {
         // read in from checkpoint file
         stocks = DataReader.getStocks();
-        // System.out.println(stocks);
+        //System.out.println(stocks);
         transactions = new ArrayList<Transaction>();
         traders = new ArrayList<AbstractTrader>();
-        day = 0;
+        currentDay = 0;
         currentTransactionIndex = 0;
     }
 
-    public static void addTrader(AbstractTrader t) {
-        traders.add(t);
+    public void simulateMarketDay() {
+        ArrayList<Transaction> trs = copyTransactions();
+        ArrayList<Integer> shareExchangeList = new ArrayList<>();
+        int totalShareExchange = 0;
+
+        for (Stock stock : stocks) {
+            filterByStock(stock.getSymbol(), trs);
+            filterByDays(5, trs);
+
+            int netShares = 0; // selling a lot will result in negative
+            for (Transaction tr : trs) {
+                if (tr.selling()) netShares -= tr.shares();
+                else netShares += tr.shares();
+            }
+            shareExchangeList.add(netShares);
+        }
+
+        for (int i : shareExchangeList) totalShareExchange += i;
+        double sentiment = Math.random();
     }
 
-    public static Stock getStockByName(String stockName) {
+    /**
+     * HELPER METHODS
+     */
+
+    public static void addTrader(AbstractTrader trader) {
+        traders.add(trader);
+    }
+
+    public static Stock getStockByTicker(String ticker) {
         for (Stock stock : getStocks()) {
-            if (stock.getSymbol().equals(stockName)) {
+            if (stock.getSymbol().equals(ticker)) {
                 return stock;
             }
         }
@@ -37,7 +62,7 @@ public class Market {
         int sharesAmount,
         String stockName
     ) throws NotEnoughMoneyException, StockDoesNotExistException {
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
@@ -52,7 +77,7 @@ public class Market {
                 true,
                 traderId,
                 currentTransactionIndex,
-                day
+                currentDay
             )
         );
         currentTransactionIndex++;
@@ -64,7 +89,7 @@ public class Market {
         String stockName
     ) throws NotEnoughMoneyException {
         double moneyAmount = getTraderMoneyAmount(traderId);
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         double estimatedCost = (double) sharesAmount * stock.getPrice();
         if (estimatedCost > moneyAmount) {
             throw new NotEnoughMoneyException("");
@@ -77,7 +102,7 @@ public class Market {
                 false,
                 traderId,
                 currentTransactionIndex,
-                day
+                currentDay
             )
         );
         currentTransactionIndex++;
@@ -89,11 +114,12 @@ public class Market {
         if (trader == null) {
             return 0;
         }
-        ArrayList<Transaction> relevantTransactions = getTransactionsForTrader(
-            traderId
+        ArrayList<Transaction> relevantTransactions = filterByTrader(
+            traderId,
+            copyTransactions()
         );
         long sharesOwned = 0;
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
@@ -112,25 +138,15 @@ public class Market {
         return sharesOwned;
     }
 
-    public static ArrayList<String> getListOfStocksForTrader(int traderId) {
-        ArrayList<String> out = new ArrayList<String>();
-        for (Transaction t : transactions) {
-            if (
-                t.traderId() == traderId && !out.contains(t.stock().getSymbol())
-            ) {
-                out.add(t.stock().getSymbol());
-            }
-        }
-        Collections.sort(out, String.CASE_INSENSITIVE_ORDER);
-        return out;
-    }
-
     public static double getTraderMoneyAmount(int traderId) {
         AbstractTrader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
         }
-        ArrayList<Transaction> relevant = getTransactionsForTrader(traderId);
+        ArrayList<Transaction> relevant = filterByTrader(
+            traderId,
+            copyTransactions()
+        );
         double money = trader.getInitialMoney();
         for (Transaction t : relevant) {
             if (t.selling()) {
@@ -142,6 +158,13 @@ public class Market {
         return money;
     }
 
+    public static AbstractTrader getTraderById(int traderId) {
+        for (AbstractTrader t : traders) {
+            if (t.getTraderId() == traderId) return t;
+        }
+        return null;
+    }
+
     public static double getCurrentTraderProfitOnStock(
         int traderId,
         String stockName
@@ -150,7 +173,7 @@ public class Market {
             traderId,
             stockName
         );
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
@@ -187,7 +210,7 @@ public class Market {
         String stockName
     ) throws StockDoesNotExistException {
         ArrayList<Transaction> out = new ArrayList<Transaction>();
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
@@ -203,16 +226,68 @@ public class Market {
         return out;
     }
 
-    public static AbstractTrader getTraderById(int traderId) {
-        for (AbstractTrader t : traders) {
-            if (t.getTraderId() == traderId) {
-                return t;
-            }
-        }
-        return null;
-    }
-
     public static ArrayList<Stock> getStocks() {
         return stocks;
+    }
+
+    public static ArrayList<Transaction> copyTransactions() {
+        return new ArrayList<Transaction>(transactions);
+    }
+
+    public static ArrayList<Transaction> filterByStock(
+        String stockName,
+        ArrayList<Transaction> trs
+    ) {
+        Stock stock = getStockByTicker(stockName);
+        for (int i = trs.size() - 1; i >= 0; i--) {
+            if (!trs.get(i).stock().equals(stockName)) {
+                trs.remove(i);
+            }
+        }
+        return trs;
+    }
+
+    public static ArrayList<Transaction> filterByTrader(
+        int traderId,
+        ArrayList<Transaction> trs
+    ) {
+        for (int i = trs.size() - 1; i >= 0; i--) {
+            if (trs.get(i).traderId() != traderId) {
+                trs.remove(i);
+            }
+        }
+        return trs;
+    }
+
+    public static ArrayList<String> getListOfStocksForTrader(int traderId) {
+        ArrayList<String> out = new ArrayList<String>();
+        for (Transaction transaction : copyTransactions()) {
+            if (transaction.traderId() == traderId) {
+                if (!out.contains(transaction.stock().getSymbol())) {
+                    out.add(transaction.stock().getSymbol());
+                }
+            }
+        }
+        for (int i = out.size() - 1; i >= 0; i--) {
+            try {
+                if (getSharesOwnedInStock(traderId, out.get(i)) <= 0) {
+                    out.remove(i);
+                }
+            } catch (StockDoesNotExistException e) {}
+        }
+        return out;
+    }
+
+    // removes every transaction that is older than days
+    public static ArrayList<Transaction> filterByDays(
+        int days,
+        ArrayList<Transaction> trs
+    ) {
+        for (int i = trs.size() - 1; i >= 0; i--) {
+            if (trs.get(i).dayTransactionMade() < currentDay - days) {
+                trs.remove(i);
+            }
+        }
+        return trs;
     }
 }
