@@ -236,7 +236,7 @@ public class Market {
     }
 
     public static ArrayList<Transaction> copyTransactions() {
-        return (ArrayList<Transaction>) transactions.clone();
+        return new ArrayList<Transaction>(transactions);
     }
 
     public static ArrayList<Transaction> filterByStock(
