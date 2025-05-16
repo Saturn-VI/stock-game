@@ -11,6 +11,5 @@ public record Transaction(
     boolean selling,
     int traderId,
     long transactionIndex,
-    long dayTransactionMade,
-    Stock stock
+    long dayTransactionMade
 ) {}

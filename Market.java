@@ -7,7 +7,6 @@ public class Market {
     private static ArrayList<AbstractTrader> traders;
     private static int day = 0;
 
-    private static long day;
     private static long currentTransactionIndex;
 
     public static void initializeMarket() {
@@ -15,54 +14,77 @@ public class Market {
         stocks = DataReader.getStocks();
         // System.out.println(stocks);
         transactions = new ArrayList<Transaction>();
-        traders = new ArrayList<Trader>();
+        traders = new ArrayList<AbstractTrader>();
         day = 0;
         currentTransactionIndex = 0;
     }
 
-    public static Stock getStockByTicker(String ticker) {
+    public static void addTrader(AbstractTrader t) {
+        traders.add(t);
+    }
+
+    public static Stock getStockByName(String stockName) {
         for (Stock stock : getStocks()) {
-            if (stock.getSymbol().equals(ticker)) {
+            if (stock.getSymbol().equals(stockName)) {
                 return stock;
             }
         }
         return null;
     }
 
-    /**
-     *
-     */
-    public static void buyShares(int shares, Stock stock, int traderId)
-        throws NotEnoughMoneyException {
-        AbstractTrader trader = getTraderById(traderId);
-        double price = shares * stock.getPrice();
-        Transaction tr = new Transaction(
-            shares,
-            stock,
-            price,
-            false,
-            traderId,
-            day
+    public static void sellShares(
+        int traderId,
+        int sharesAmount,
+        String stockName
+    ) throws NotEnoughMoneyException, StockDoesNotExistException {
+        Stock stock = getStockByName(stockName);
+        if (stock == null) {
+            throw new StockDoesNotExistException("");
+        }
+        if (sharesAmount > getSharesOwnedInStock(traderId, stockName)) {
+            throw new NotEnoughMoneyException("");
+        }
+        transactions.add(
+            new Transaction(
+                sharesAmount,
+                stock,
+                stock.getPrice(),
+                true,
+                traderId,
+                currentTransactionIndex,
+                day
+            )
         );
-        transactions.add(tr);
+        currentTransactionIndex++;
     }
 
-    public static void sellShares(int shares, Stock stock, int traderId)
-        throws NotEnoughtSharesException {
-        AbstractTrader trader = getTraderById(traderId);
-        double price = sharesOwnedInStock(traderId, stock) * stock.getPrice();
-        Transaction tr = new Transaction(
-            shares,
-            stock,
-            price,
-            true,
-            traderId,
-            day
+    public static void buyShares(
+        int traderId,
+        int sharesAmount,
+        String stockName
+    ) throws NotEnoughMoneyException {
+        double moneyAmount = getTraderMoneyAmount(traderId);
+        Stock stock = getStockByName(stockName);
+        double estimatedCost = (double) sharesAmount * stock.getPrice();
+        if (estimatedCost > moneyAmount) {
+            throw new NotEnoughMoneyException("");
+        }
+        transactions.add(
+            new Transaction(
+                sharesAmount,
+                stock,
+                stock.getPrice(),
+                false,
+                traderId,
+                currentTransactionIndex,
+                day
+            )
         );
-        transactions.add(tr);
+        currentTransactionIndex++;
     }
 
-    public static long sharesOwnedInStock(int traderId, Stock stock) {
+    public static long getSharesOwnedInStock(int traderId, String stockName)
+        throws StockDoesNotExistException {
         AbstractTrader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
@@ -71,33 +93,81 @@ public class Market {
             traderId
         );
         long sharesOwned = 0;
-        Stock stock = getStockByTicker(stockName);
+        Stock stock = getStockByName(stockName);
+        if (stock == null) {
+            throw new StockDoesNotExistException("");
+        }
         for (Transaction transaction : relevantTransactions) {
-            boolean isStock = transaction.stock().equals(stock);
-            if (transaction.selling() && isStock) {
-                sharesOwned -= transaction.shares();
-            } else if (isStock) {
-                sharesOwned += transaction.shares();
+            boolean isStock =
+                transaction.stock() != null &&
+                transaction.stock().equals(stock);
+            if (isStock) {
+                if (transaction.selling()) {
+                    sharesOwned -= transaction.shares();
+                } else {
+                    sharesOwned += transaction.shares();
+                }
             }
         }
         return sharesOwned;
     }
 
-    public static double getTraderMoney(int traderId) {
+    public static ArrayList<String> getListOfStocksForTrader(int traderId) {
+        ArrayList<String> out = new ArrayList<String>();
+        for (Transaction t : transactions) {
+            if (
+                t.traderId() == traderId && !out.contains(t.stock().getSymbol())
+            ) {
+                out.add(t.stock().getSymbol());
+            }
+        }
+        Collections.sort(out, String.CASE_INSENSITIVE_ORDER);
+        return out;
+    }
+
+    public static double getTraderMoneyAmount(int traderId) {
         AbstractTrader trader = getTraderById(traderId);
         if (trader == null) {
             return 0;
         }
         ArrayList<Transaction> relevant = getTransactionsForTrader(traderId);
-        double money = trader.initialMoney();
+        double money = trader.getInitialMoney();
         for (Transaction t : relevant) {
             if (t.selling()) {
-                money += t.shares() * t.price();
+                money += (double) t.shares() * t.price();
             } else {
-                money -= t.shares() * t.price();
+                money -= (double) t.shares() * t.price();
             }
         }
         return money;
+    }
+
+    public static double getCurrentTraderProfitOnStock(
+        int traderId,
+        String stockName
+    ) throws StockDoesNotExistException {
+        ArrayList<Transaction> relevantTransactions = getTransactionsForTrader(
+            traderId,
+            stockName
+        );
+        Stock stock = getStockByName(stockName);
+        if (stock == null) {
+            throw new StockDoesNotExistException("");
+        }
+        long sharesOwned = 0;
+        double netMoneyFlow = 0;
+
+        for (Transaction t : relevantTransactions) {
+            if (t.selling()) {
+                netMoneyFlow += (double) t.shares() * t.price();
+                sharesOwned -= t.shares();
+            } else {
+                netMoneyFlow -= (double) t.shares() * t.price();
+                sharesOwned += t.shares();
+            }
+        }
+
+        return (double) sharesOwned * stock.getPrice() + netMoneyFlow;
     }
 
     public static ArrayList<Transaction> getTransactionsForTrader(
@@ -112,8 +182,34 @@ public class Market {
         return out;
     }
 
+    public static ArrayList<Transaction> getTransactionsForTrader(
+        int traderId,
+        String stockName
+    ) throws StockDoesNotExistException {
+        ArrayList<Transaction> out = new ArrayList<Transaction>();
+        Stock stock = getStockByName(stockName);
+        if (stock == null) {
+            throw new StockDoesNotExistException("");
+        }
+        for (Transaction t : transactions) {
+            if (
+                t.traderId() == traderId &&
+                t.stock() != null &&
+                t.stock().equals(stock)
+            ) {
+                out.add(t);
+            }
+        }
+        return out;
+    }
+
     public static AbstractTrader getTraderById(int traderId) {
-        for (Trader t : traders) {}
+        for (AbstractTrader t : traders) {
+            if (t.getTraderId() == traderId) {
+                return t;
+            }
+        }
+        return null;
     }
 
     public static ArrayList<Stock> getStocks() {

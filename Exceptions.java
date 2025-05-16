@@ -18,3 +18,10 @@ class TraderDoesNotExistException extends Exception {
         super(m);
     }
 }
+
+class StockDoesNotExistException extends Exception {
+
+    public StockDoesNotExistException(String m) {
+        super(m);
+    }
+}
