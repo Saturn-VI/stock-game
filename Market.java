@@ -46,7 +46,7 @@ public class Market {
 
     public static Stock getStockByTicker(String ticker) {
         for (Stock stock : getStocks()) {
-            if (stock.getSymbol().equals(stockName)) {
+            if (stock.getSymbol().equals(ticker)) {
                 return stock;
             }
         }
@@ -58,7 +58,7 @@ public class Market {
         int sharesAmount,
         String stockName
     ) throws NotEnoughMoneyException, StockDoesNotExistException {
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
@@ -73,7 +73,7 @@ public class Market {
                 true,
                 traderId,
                 currentTransactionIndex,
-                day
+                currentDay
             )
         );
         currentTransactionIndex++;
@@ -85,7 +85,7 @@ public class Market {
         String stockName
     ) throws NotEnoughMoneyException {
         double moneyAmount = getTraderMoneyAmount(traderId);
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         double estimatedCost = (double) sharesAmount * stock.getPrice();
         if (estimatedCost > moneyAmount) {
             throw new NotEnoughMoneyException("");
@@ -98,7 +98,7 @@ public class Market {
                 false,
                 traderId,
                 currentTransactionIndex,
-                day
+                currentDay
             )
         );
         currentTransactionIndex++;
@@ -115,7 +115,7 @@ public class Market {
             copyTransactions()
         );
         long sharesOwned = 0;
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
@@ -169,7 +169,7 @@ public class Market {
             traderId,
             stockName
         );
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
@@ -206,7 +206,7 @@ public class Market {
         String stockName
     ) throws StockDoesNotExistException {
         ArrayList<Transaction> out = new ArrayList<Transaction>();
-        Stock stock = getStockByName(stockName);
+        Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
@@ -220,15 +220,6 @@ public class Market {
             }
         }
         return out;
-    }
-
-    public static AbstractTrader getTraderById(int traderId) {
-        for (AbstractTrader t : traders) {
-            if (t.getTraderId() == traderId) {
-                return t;
-            }
-        }
-        return null;
     }
 
     public static ArrayList<Stock> getStocks() {
