@@ -50,14 +50,36 @@ public class GameWindow {
         gameFrame.setVisible(true);
     }
 
-    // Custom TableCellRenderer for currency values
-    class CurrencyTableCellRenderer extends DefaultTableCellRenderer {
+    class BaseFontCellRenderer extends DefaultTableCellRenderer {
+        private final Font cellFont = FontFactory.getFont("Medium", 14);
+
+        public BaseFontCellRenderer(boolean alignToRight) {
+            super();
+            if (alignToRight) {
+                setHorizontalAlignment(SwingConstants.RIGHT);
+            } else {
+                setHorizontalAlignment(SwingConstants.LEFT);
+            }
+            setVerticalAlignment(SwingConstants.CENTER);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (cellFont != null) {
+                c.setFont(cellFont);
+            }
+            return c;
+        }
+    }
+
+    class CurrencyTableCellRenderer extends BaseFontCellRenderer {
         private boolean colorize;
         private DecimalFormat currencyFormat = new DecimalFormat("$#,##0.00");
 
         public CurrencyTableCellRenderer(boolean colorize) {
+            super(true);
             this.colorize = colorize;
-            setHorizontalAlignment(SwingConstants.RIGHT);
         }
 
         @Override
@@ -112,9 +134,13 @@ public class GameWindow {
             tableScrollPane.setPreferredSize(new Dimension(800, 200));
             stockInfoTable = new JTable(new CustomTableModel());
 
-            // Set custom renderers for currency columns
+            // Set custom renderers for columns
+            // column 0: Name (regular, left align)
+            stockInfoTable.getColumnModel().getColumn(0).setCellRenderer(new BaseFontCellRenderer(false));
             // column 1: Price (no color)
             stockInfoTable.getColumnModel().getColumn(1).setCellRenderer(new CurrencyTableCellRenderer(false));
+            // column 2: Shares Owned (no color, right align)
+            stockInfoTable.getColumnModel().getColumn(2).setCellRenderer(new BaseFontCellRenderer(true));
             // column 3: Holding Value (no color)
             stockInfoTable.getColumnModel().getColumn(3).setCellRenderer(new CurrencyTableCellRenderer(false));
             // column 4: Current Profit (coloring)
@@ -143,7 +169,7 @@ public class GameWindow {
                 }
             });
 
-            tableScrollPane = new JScrollPane(stockInfoTable); // Use stockInfoTable directly here
+            tableScrollPane = new JScrollPane(stockInfoTable);
             tableScrollPane.setPreferredSize(new Dimension(800, 200));
 
 
@@ -165,7 +191,7 @@ public class GameWindow {
 
         public void updatePortfolioInfo() {
             moneyAmountLabel.setText(
-                "$" + Market.getTraderMoneyAmount(Main.playerTraderId)
+                String.format("$%.2f", Market.getTraderMoneyAmount(Main.playerTraderId))
             );
             CustomTableModel tableModel =
                 ((CustomTableModel) stockInfoTable.getModel());
