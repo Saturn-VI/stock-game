@@ -278,13 +278,14 @@ public class Market {
         String stockName,
         ArrayList<Transaction> trs
     ) {
+        ArrayList<Transaction> out = new ArrayList<>();
         Stock stock = getStockByTicker(stockName);
-        for (int i = trs.size() - 1; i >= 0; i--) {
-            if (!trs.get(i).stock().equals(stock)) {
-                trs.remove(i);
+        for (Transaction tr : trs) {
+            if (tr.stock().equals(stock)) {
+                out.add(tr);
             }
         }
-        return trs;
+        return out;
     }
 
     public static ArrayList<Transaction> filterByTrader(
