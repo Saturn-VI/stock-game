@@ -1,9 +1,8 @@
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.*;
 
 public class GameWindow {
 
@@ -26,13 +25,26 @@ public class GameWindow {
 
         tabbedPane.addTab("View stock", stockDisplayPanel);
         tabbedPane.addTab("Portfolio", portfolioPanel);
+        tabbedPane.setTabComponentAt(0, new JLabel("", SwingConstants.CENTER));
+        tabbedPane.setTabComponentAt(1, new JLabel("", SwingConstants.CENTER));
+        Font tabFont = FontFactory.getFont("Bold", 18);
+
+        JLabel stockLabel = (JLabel) tabbedPane.getTabComponentAt(0);
+        stockLabel.setText("View stock");
+        stockLabel.setFont(tabFont);
+        stockLabel.setPreferredSize(new Dimension(200, 30));
+
+        JLabel portfolioLabel = (JLabel) tabbedPane.getTabComponentAt(1);
+        portfolioLabel.setText("Portfolio");
+        portfolioLabel.setFont(tabFont);
+        portfolioLabel.setPreferredSize(new Dimension(200, 30));
 
         gameFrame.add(tabbedPane);
 
-        gameFrame.setSize(600, 600);
+        gameFrame.setSize(1200, 1200);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.pack();
-        gameFrame.setMinimumSize(gameFrame.getSize());
+        gameFrame.setMinimumSize(new Dimension((int) (gameFrame.getSize().getWidth() * 1.05), (int) (gameFrame.getSize().getHeight() * 1.05)));
         gameFrame.setVisible(true);
     }
 
@@ -46,19 +58,29 @@ public class GameWindow {
             super();
             this.setLayout(new GridBagLayout());
             GridBagConstraints constraints = new GridBagConstraints();
-            constraints.insets = new Insets(10, 10, 10, 10);
+            constraints.insets = new Insets(20, 20, 20, 20);
 
             moneyAmountLabel = new JLabel("", SwingConstants.CENTER);
             TitledBorder moneyBorder;
             moneyBorder = BorderFactory.createTitledBorder("Money");
             moneyBorder.setTitleJustification(TitledBorder.CENTER);
+            moneyBorder.setTitleFont(FontFactory.getFont("Bold", 18));
             moneyAmountLabel.setBorder(moneyBorder);
-            moneyAmountLabel.setPreferredSize(new Dimension(150, 50));
+            moneyAmountLabel.setFont(FontFactory.getFont("ExtraBold", 48));
+            moneyAmountLabel.setPreferredSize(new Dimension(300, 100));
 
             tableScrollPane = new JScrollPane();
-            tableScrollPane.setPreferredSize(new Dimension(400, 100));
+            tableScrollPane.setPreferredSize(new Dimension(800, 200));
             stockInfoTable = new JTable(new CustomTableModel());
-            stockInfoTable.setPreferredScrollableViewportSize(new Dimension(400, 10));
+
+            // Get the table header and set its font
+            JTableHeader tableHeader = stockInfoTable.getTableHeader();
+            Font headerFont = FontFactory.getFont("SemiBold", 16);
+            if (headerFont != null) {
+                tableHeader.setFont(headerFont);
+            }
+
+            stockInfoTable.setPreferredScrollableViewportSize(new Dimension(800, 20));
             stockInfoTable.setFillsViewportHeight(true);
             tableScrollPane.setViewportView(stockInfoTable);
 
