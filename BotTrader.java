@@ -21,7 +21,8 @@ public class BotTrader extends AbstractTrader {
     "Nicole",
     "Elizabeth",
     "Heather",
-    "Baron"
+    "Baron",
+    "Anthony"
   };
 
   public static final String[] lastNames = {
@@ -42,7 +43,9 @@ public class BotTrader extends AbstractTrader {
     "Goldman",
     "Ferrero",
     "Wallstreet",
-    "Betts"
+    "Betts",
+    "Buckett",
+    "Shockey"
   };
   
   public BotTrader(int traderId) {

@@ -8,12 +8,14 @@ public class Main {
         Market.initializeMarket();
         DataReader.getStocks();
         runMarketTests();
+        for (AbstractTrader t : Market.getTraders()) {
+            System.out.println(t);
+        }
         //SwingUtilities.invokeLater(() -> new GameWindow());
     }
 
     public static void runMarketTests() {
-        AbstractTrader playerTrader = new PlayerTrader(playerTraderId);
-        Market.addTrader(playerTrader);
+        AbstractTrader playerTrader = Market.getTraderById(0);
         Stock stock = Market.getStockByTicker("TSLA");
         try {
             Market.buyShares(playerTraderId, 5, "TSLA");

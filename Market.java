@@ -247,33 +247,12 @@ public class Market {
         return stocks;
     }
 
+    public static ArrayList<AbstractTrader> getTraders() {
+        return traders;
+    }
+
     public static ArrayList<Transaction> copyTransactions() {
         return new ArrayList<Transaction>(transactions);
-    }
-
-    public static ArrayList<Transaction> filterByStock(
-        String stockName,
-        ArrayList<Transaction> trs
-    ) {
-        Stock stock = getStockByTicker(stockName);
-        for (int i = trs.size() - 1; i >= 0; i--) {
-            if (!trs.get(i).stock().equals(stockName)) {
-                trs.remove(i);
-            }
-        }
-        return trs;
-    }
-
-    public static ArrayList<Transaction> filterByTrader(
-        int traderId,
-        ArrayList<Transaction> trs
-    ) {
-        for (int i = trs.size() - 1; i >= 0; i--) {
-            if (trs.get(i).traderId() != traderId) {
-                trs.remove(i);
-            }
-        }
-        return trs;
     }
 
     public static ArrayList<String> getListOfStocksForTrader(int traderId) {
@@ -294,6 +273,32 @@ public class Market {
         }
         return out;
     }
+
+    public static ArrayList<Transaction> filterByStock(
+        String stockName,
+        ArrayList<Transaction> trs
+    ) {
+        Stock stock = getStockByTicker(stockName);
+        for (int i = trs.size() - 1; i >= 0; i--) {
+            if (!trs.get(i).stock().equals(stock)) {
+                trs.remove(i);
+            }
+        }
+        return trs;
+    }
+
+    public static ArrayList<Transaction> filterByTrader(
+        int traderId,
+        ArrayList<Transaction> trs
+    ) {
+        for (int i = trs.size() - 1; i >= 0; i--) {
+            if (trs.get(i).traderId() != traderId) {
+                trs.remove(i);
+            }
+        }
+        return trs;
+    }
+
 
     // removes every transaction that is older than days
     public static ArrayList<Transaction> filterByDays(
