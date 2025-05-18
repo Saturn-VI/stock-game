@@ -24,11 +24,11 @@ public class Market {
         }
     }
 
-    public void simulateMarketDay() {
+    public static void simulateMarketDay() {
         ArrayList<Transaction> trs = copyTransactions();
         ArrayList<Integer> shareExchangeList = new ArrayList<>();
         int totalShareExchange = 0;
-        double marketSentiment = 0; 
+        double marketSentiment = 0;
 
         for (Stock stock : stocks) {
             filterByStock(stock.getSymbol(), trs);
@@ -48,11 +48,13 @@ public class Market {
             // NOTE: IF HAVE TIME, MAKE THE ALGORITHM
             // A BIT MORE ADVANCED BY CONSIDERING
             // OVERALL MARKET SENTIMENT
-            
-            double rawSentiment = (double) netShares / ((double) stock.getTotalShares() / 10000000);
+
+            double rawSentiment = (double) netShares / ((double) stock.getTotalShares() / 320000000);
             double sentiment = rawSentiment * (0.95 + Math.random()/10);
+            System.out.println(rawSentiment);
+            System.out.println(sentiment);
             stock.setPrice(stock.getPrice() * sentiment);
-            
+
             shareExchangeList.add(netShares);
         }
 
@@ -63,6 +65,14 @@ public class Market {
 
     public static void addTrader(AbstractTrader trader) {
         traders.add(trader);
+    }
+
+    public static ArrayList<AbstractTrader> getListOfTraders() {
+        return new ArrayList<AbstractTrader>(traders);
+    }
+
+    public static long getCurrentDay() {
+        return currentDay;
     }
 
     public static Stock getStockByTicker(String ticker) {

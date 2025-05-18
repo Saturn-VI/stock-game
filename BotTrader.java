@@ -47,15 +47,16 @@ public class BotTrader extends AbstractTrader {
     "Buckett",
     "Shockey"
   };
-  
+
   public BotTrader(int traderId) {
-    super(traderId, firstNames[(int)(Math.random() * firstNames.length)] + " " + lastNames[(int)(Math.random() * lastNames.length)]);
+    super(traderId, getRandomName());
   }
 
   public BotTrader(int traderId, int money) {
-    super(traderId, money, firstNames[(int)(Math.random() * firstNames.length)] + " " + lastNames[(int)(Math.random() * lastNames.length)]);
+    super(traderId, money, getRandomName());
   }
 
-  
-
+  public static String getRandomName() {
+    return firstNames[(int)(Math.random() * firstNames.length)] + " " + lastNames[(int)(Math.random() * lastNames.length)];
+  }
 }

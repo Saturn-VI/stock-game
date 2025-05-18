@@ -10,6 +10,7 @@ public class GameWindow {
 
     private JFrame gameFrame;
     private HomePanel homePanel;
+    private JScrollPane homeScrollPane;
     private StockDisplayPanel stockDisplayPanel;
     private PortfolioPanel portfolioPanel;
     private JTabbedPane tabbedPane;
@@ -23,12 +24,13 @@ public class GameWindow {
         gameFrame.setLayout(new BorderLayout());
 
         homePanel = new HomePanel();
+        homeScrollPane = new JScrollPane(homePanel);
         stockDisplayPanel = new StockDisplayPanel();
         portfolioPanel = new PortfolioPanel();
 
         tabbedPane = new JTabbedPane();
         String[] tabNames = { "Home", "View stock", "Portfolio" };
-        JPanel[] tabPanels = { homePanel, stockDisplayPanel, portfolioPanel };
+        JComponent[] tabPanels = { homeScrollPane, stockDisplayPanel, portfolioPanel }; // Home will be added as scrollpane
         Font tabFont = FontFactory.getFont("Bold", 18);
 
         for (int i = 0; i < 3; i++) {
@@ -66,6 +68,18 @@ public class GameWindow {
 
     public void updatePortfolioInfo() {
         portfolioPanel.updatePortfolioInfo();
+    }
+
+    public void updateData() {
+        if (homePanel != null && homePanel instanceof HomePanel) {
+            homePanel.updateHomePanelData();
+        }
+        if (stockDisplayPanel != null) {
+            stockDisplayPanel.updateStockDisplayData();
+        }
+        if (portfolioPanel != null) {
+            portfolioPanel.updatePortfolioInfo();
+        }
     }
 
     class BaseFontCellRenderer extends DefaultTableCellRenderer {
@@ -161,6 +175,9 @@ public class GameWindow {
 
         private JLabel banner;
         private JLabel welcomeLabel;
+        private JList<AbstractTrader> traderList;
+        private JLabel currentDayLabel;
+        private JButton simulateMarketDayButton;
 
         public HomePanel() {
             super();
@@ -172,13 +189,64 @@ public class GameWindow {
             Image image = icon.getImage().getScaledInstance(333, 100, Image.SCALE_SMOOTH);
             banner = new JLabel(new ImageIcon(image));
 
-            // welcomeLabel = new JLabel(String.format("Welcome to TradeMaster 2000, %s!", PlayerTrader.), SwingConstants.CENTER);
+            welcomeLabel = new JLabel("Welcome to TradeMaster 2000!", SwingConstants.CENTER);
+            welcomeLabel.setFont(FontFactory.getFont("Bold", 40));
+
+            traderList = new JList<AbstractTrader>();
+            traderList.setSelectionModel(new DefaultListSelectionModel() {
+                @Override
+                public void setSelectionInterval(int index0, int index1) {
+                    // Disable selection
+                }
+            });
+            traderList.setFocusable(false);
+            traderList.setOpaque(false);
+            traderList.setBackground(new Color(0, 0, 0, 0));
+            TitledBorder traderListBorder;
+            traderListBorder = BorderFactory.createTitledBorder("Traders");
+            traderListBorder.setTitleJustification(TitledBorder.CENTER);
+            traderListBorder.setTitleFont(FontFactory.getFont("Bold", 24));
+            traderList.setBorder(traderListBorder);
+
+            currentDayLabel = new JLabel("", SwingConstants.CENTER);
+            currentDayLabel.setFont(FontFactory.getFont("Bold", 24));
+
+            simulateMarketDayButton = new JButton("Next Day");
+            simulateMarketDayButton.setFont(FontFactory.getFont("Bold", 24));
+            simulateMarketDayButton.addActionListener(e -> {
+                Market.simulateMarketDay();
+                GameWindow.this.updateData();
+            });
 
             constraints.gridx = 1;
             constraints.gridy = 0;
             constraints.gridwidth = 1;
             constraints.gridheight = 1;
+            constraints.fill = GridBagConstraints.HORIZONTAL;
             this.add(banner, constraints);
+
+            constraints.gridy = 1;
+            this.add(welcomeLabel, constraints);
+
+            constraints.gridy = 2;
+            constraints.gridx = 1;
+            this.add(traderList, constraints);
+
+            constraints.gridy = 3;
+            constraints.gridx = 1;
+            this.add(currentDayLabel, constraints);
+
+            constraints.gridy = 4;
+            constraints.gridx = 1;
+            constraints.fill = GridBagConstraints.NONE;
+            this.add(simulateMarketDayButton, constraints);
+
+            updateHomePanelData();
+        }
+
+        public void updateHomePanelData() {
+            currentDayLabel.setText(String.format("Day %d", Market.getCurrentDay()));
+            traderList.setListData(Market.getListOfTraders().toArray(new AbstractTrader[0]));
         }
     }
 
@@ -195,6 +263,10 @@ public class GameWindow {
             // TODO
             // Takes a stock symbol (String) and sets the data to show this stock
 
+        }
+
+        public void updateStockDisplayData() {
+            // TODO
         }
     }
 
