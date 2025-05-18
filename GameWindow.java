@@ -159,11 +159,26 @@ public class GameWindow {
 
     class HomePanel extends JPanel {
 
+        private JLabel banner;
+        private JLabel welcomeLabel;
+
         public HomePanel() {
             super();
             this.setLayout(new GridBagLayout());
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.insets = new Insets(10, 10, 10, 10);
+
+            ImageIcon icon = new ImageIcon("./assets/trademaster2k.png");
+            Image image = icon.getImage().getScaledInstance(333, 100, Image.SCALE_SMOOTH);
+            banner = new JLabel(new ImageIcon(image));
+
+            // welcomeLabel = new JLabel(String.format("Welcome to TradeMaster 2000, %s!", PlayerTrader.), SwingConstants.CENTER);
+
+            constraints.gridx = 1;
+            constraints.gridy = 0;
+            constraints.gridwidth = 1;
+            constraints.gridheight = 1;
+            this.add(banner, constraints);
         }
     }
 
