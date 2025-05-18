@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mkdir target
+mkdir -p target
 
 # cd and build files in src/
 javac *.java

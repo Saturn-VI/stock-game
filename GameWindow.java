@@ -19,7 +19,7 @@ public class GameWindow {
     }
 
     private void setupGameFrame() {
-        gameFrame = new JFrame();
+        gameFrame = new JFrame("TradeMaster 2000");
         gameFrame.setLayout(new BorderLayout());
 
         homePanel = new HomePanel();
@@ -51,6 +51,11 @@ public class GameWindow {
                 (int) (gameFrame.getSize().getHeight() * 1.1)
             )
         );
+
+        ImageIcon icon = new ImageIcon("./assets/trademaster2ksmall.png");
+        Image image = icon.getImage();
+        gameFrame.setIconImage(image);
+
         gameFrame.setVisible(true);
     }
 
@@ -65,7 +70,7 @@ public class GameWindow {
 
     class BaseFontCellRenderer extends DefaultTableCellRenderer {
 
-        private final Font cellFont = FontFactory.getFont("Medium", 14);
+        private final Font cellFont = FontFactory.getFont("Medium", 20);
 
         public BaseFontCellRenderer(boolean alignToRight) {
             super();
@@ -154,11 +159,42 @@ public class GameWindow {
 
     class HomePanel extends JPanel {
 
+        private JLabel banner;
+        private JLabel welcomeLabel;
+
         public HomePanel() {
             super();
             this.setLayout(new GridBagLayout());
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.insets = new Insets(10, 10, 10, 10);
+
+            ImageIcon icon = new ImageIcon("./assets/trademaster2k.png");
+            Image image = icon.getImage().getScaledInstance(333, 100, Image.SCALE_SMOOTH);
+            banner = new JLabel(new ImageIcon(image));
+
+            // welcomeLabel = new JLabel(String.format("Welcome to TradeMaster 2000, %s!", PlayerTrader.), SwingConstants.CENTER);
+
+            constraints.gridx = 1;
+            constraints.gridy = 0;
+            constraints.gridwidth = 1;
+            constraints.gridheight = 1;
+            this.add(banner, constraints);
+        }
+    }
+
+    class StockDisplayPanel extends JPanel {
+
+        public StockDisplayPanel() {
+            super();
+            this.setLayout(new GridBagLayout());
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.insets = new Insets(10, 10, 10, 10);
+        }
+
+        public void setViewStock(String stockName) {
+            // TODO
+            // Takes a stock symbol (String) and sets the data to show this stock
+
         }
     }
 
@@ -178,10 +214,10 @@ public class GameWindow {
             TitledBorder moneyBorder;
             moneyBorder = BorderFactory.createTitledBorder("Money");
             moneyBorder.setTitleJustification(TitledBorder.CENTER);
-            moneyBorder.setTitleFont(FontFactory.getFont("Bold", 18));
+            moneyBorder.setTitleFont(FontFactory.getFont("Bold", 24));
             moneyAmountLabel.setBorder(moneyBorder);
-            moneyAmountLabel.setFont(FontFactory.getFont("ExtraBold", 48));
-            moneyAmountLabel.setPreferredSize(new Dimension(300, 100));
+            moneyAmountLabel.setFont(FontFactory.getFont("ExtraBold", 60));
+            moneyAmountLabel.setPreferredSize(new Dimension(450, 150));
 
             tableScrollPane = new JScrollPane();
             tableScrollPane.setPreferredSize(new Dimension(800, 200));
@@ -215,7 +251,7 @@ public class GameWindow {
                 .setCellRenderer(new CurrencyTableCellRenderer(true));
 
             JTableHeader tableHeader = stockInfoTable.getTableHeader();
-            Font headerFont = FontFactory.getFont("SemiBold", 16);
+            Font headerFont = FontFactory.getFont("SemiBold", 18);
             if (headerFont != null) {
                 tableHeader.setFont(headerFont);
             }
@@ -223,6 +259,7 @@ public class GameWindow {
             stockInfoTable.setPreferredScrollableViewportSize(
                 new Dimension(800, 20)
             );
+            stockInfoTable.setRowHeight(24);
             stockInfoTable.setFillsViewportHeight(true);
             stockInfoTable.addMouseListener(
                 new MouseAdapter() {
@@ -251,7 +288,7 @@ public class GameWindow {
             );
 
             tableScrollPane = new JScrollPane(stockInfoTable);
-            tableScrollPane.setPreferredSize(new Dimension(800, 200));
+            tableScrollPane.setPreferredSize(new Dimension(900, 250));
 
             constraints.gridx = 2;
             constraints.gridy = 0;
@@ -384,22 +421,6 @@ public class GameWindow {
                 }
                 return Object.class;
             }
-        }
-    }
-
-    class StockDisplayPanel extends JPanel {
-
-        public StockDisplayPanel() {
-            super();
-            this.setLayout(new GridBagLayout());
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.insets = new Insets(10, 10, 10, 10);
-        }
-
-        public void setViewStock(String stockName) {
-            // TODO
-            // Takes a stock symbol (String) and sets the data to show this stock
-
         }
     }
 }
