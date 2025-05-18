@@ -51,6 +51,11 @@ public class GameWindow {
                 (int) (gameFrame.getSize().getHeight() * 1.1)
             )
         );
+
+        ImageIcon icon = new ImageIcon("./assets/trademaster2ksmall.png");
+        Image image = icon.getImage();
+        gameFrame.setIconImage(image);
+
         gameFrame.setVisible(true);
     }
 
@@ -159,6 +164,22 @@ public class GameWindow {
             this.setLayout(new GridBagLayout());
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.insets = new Insets(10, 10, 10, 10);
+        }
+    }
+
+    class StockDisplayPanel extends JPanel {
+
+        public StockDisplayPanel() {
+            super();
+            this.setLayout(new GridBagLayout());
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.insets = new Insets(10, 10, 10, 10);
+        }
+
+        public void setViewStock(String stockName) {
+            // TODO
+            // Takes a stock symbol (String) and sets the data to show this stock
+
         }
     }
 
@@ -385,22 +406,6 @@ public class GameWindow {
                 }
                 return Object.class;
             }
-        }
-    }
-
-    class StockDisplayPanel extends JPanel {
-
-        public StockDisplayPanel() {
-            super();
-            this.setLayout(new GridBagLayout());
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.insets = new Insets(10, 10, 10, 10);
-        }
-
-        public void setViewStock(String stockName) {
-            // TODO
-            // Takes a stock symbol (String) and sets the data to show this stock
-
         }
     }
 }

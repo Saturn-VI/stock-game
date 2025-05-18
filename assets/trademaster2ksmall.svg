@@ -9,6 +9,9 @@
    id="svg1"
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="trademaster2ksmall.svg"
+   inkscape:export-filename="trademaster2ksmall.png"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +27,7 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="2.5600001"
-     inkscape:cx="77.539061"
+     inkscape:cx="77.929684"
      inkscape:cy="158.98437"
      inkscape:window-width="2752"
      inkscape:window-height="1071"
@@ -39,7 +42,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#1a1a1a;fill-opacity:1;stroke-width:3.28818;stroke-linejoin:round;stroke-miterlimit:5"
+       style="display:inline;fill:#1a1a1a;fill-opacity:1;stroke-width:3.28818;stroke-linejoin:round;stroke-miterlimit:5"
        id="rect1"
        width="150"
        height="150"
