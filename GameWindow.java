@@ -407,7 +407,9 @@ public class GameWindow {
                     sharesOwned = Market.getSharesOwnedInStock(Main.playerTraderId, stock.getSymbol());
                     holdingValue = sharesOwned * price;
                     profit = Market.getCurrentTraderProfitOnStock(Main.playerTraderId, stock.getSymbol());
-                } catch (Exception e) {}
+                } catch (StockDoesNotExistException e) {
+                    e.printStackTrace();
+                }
                 playerSharesLabel.setText("Your Shares: " + sharesOwned);
                 playerValueLabel.setText(String.format("Your Holding Value: $%.2f", holdingValue));
                 playerProfitLabel.setText(String.format("Your Overall Profit: $%.2f", profit));
