@@ -51,8 +51,6 @@ public class Market {
 
             double rawSentiment = (double) netShares / ((double) stock.getTotalShares() / 320000000);
             double sentiment = rawSentiment * (0.95 + Math.random()/10);
-            System.out.println(rawSentiment);
-            System.out.println(sentiment);
             stock.setPrice(stock.getPrice() * sentiment);
 
             shareExchangeList.add(netShares);
