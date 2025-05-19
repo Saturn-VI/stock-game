@@ -6,6 +6,8 @@ public class BotTrader extends AbstractTrader {
     "Matthew",
     "Joshua",
     "David",
+    "Bertie",
+    "Steve",
     "James",
     "Daniel",
     "Robert",
