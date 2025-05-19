@@ -418,7 +418,7 @@ public class GameWindow {
                 int volume = 0;
                 ArrayList<Transaction> transactions = Market.copyTransactions();
                 transactions = Market.filterByStock(stock.getSymbol(), transactions);
-                for (Transaction t : Market.filterByDays(0, transactions)) { // this might work? TODO: see if this actually works
+                for (Transaction t : Market.filterByDays(0, transactions)) { // gets transactions made today
                     volume += t.shares();
                 }
                 volumeLabel.setText(String.format("Volume (today): %d shares", volume));

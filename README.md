@@ -17,3 +17,4 @@ Example GUI
     - [x] allow traders to interact with market
 - [x] Pull data from real stocks
     - [x] Get top 50 stocks by market value? (shouldn't be too many)
+- [ ] Make sure to run GameWindow.this.update() whenever a stock is purchased
