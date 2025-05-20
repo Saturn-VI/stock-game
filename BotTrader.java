@@ -45,15 +45,22 @@ public class BotTrader extends AbstractTrader {
     "Wallstreet",
     "Betts",
     "Buckett",
-    "Shockey"
+    "Shockey",
+    "Broker",
+    "Dollarwise",
+    "Poore"
   };
-  
+
   public BotTrader(int traderId) {
     super(traderId, firstNames[(int)(Math.random() * firstNames.length)] + " " + lastNames[(int)(Math.random() * lastNames.length)]);
   }
 
   public BotTrader(int traderId, int money) {
     super(traderId, money, firstNames[(int)(Math.random() * firstNames.length)] + " " + lastNames[(int)(Math.random() * lastNames.length)]);
+  }
+
+  public void simulateBotDay() {
+    
   }
 
   

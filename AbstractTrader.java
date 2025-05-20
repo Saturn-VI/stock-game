@@ -29,6 +29,6 @@ public abstract class AbstractTrader {
     }
 
     public String toString() {
-        return traderId + " " + name + ": $" + Market.getTraderMoneyAmount(traderId);
+        return traderId + " " + name + " $" + Market.getTraderMoneyAmount(traderId);
     }
 }
