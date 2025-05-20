@@ -25,8 +25,8 @@ public class Market {
         int totalShareExchange = 0;
         double marketSentiment = 0;
 
+        simulateAllBots();
         
-
         for (Stock stock : stocks) {
             filterByStock(stock.getSymbol(), trs);
             filterByDays(5, trs);
@@ -47,15 +47,20 @@ public class Market {
             // OVERALL MARKET SENTIMENT
             
             double rawSentiment = 1 + (double) netShares / ((double) stock.getTotalShares() / 1000000);
-            if (stock.getSymbol().equals("AAPL")) System.out.println(rawSentiment + " " + netShares);
-
-            double sentiment = rawSentiment * (0.95 + Math.random()/10);
+            double sentiment = rawSentiment * (0.975 + Math.random()/20);
+            if (stock.getSymbol().equals("AAPL")) System.out.println(rawSentiment + " " + sentiment + " " + netShares);
             stock.setPrice(stock.getPrice() * sentiment);
 
             shareExchangeList.add(netShares);
         }
 
         currentDay++;
+    }
+
+    public static void simulateAllBots() {
+        for (AbstractTrader trader : getListOfTraders()) {
+            trader.simulateTraderDay();
+        }
     }
 
     // HELPER METHODS
