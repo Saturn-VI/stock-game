@@ -17,11 +17,6 @@ public class Market {
         traders = new ArrayList<AbstractTrader>();
         currentDay = 0;
         currentTransactionIndex = 0;
-
-        traders.add(new PlayerTrader(0));
-        for (int i=1; i<10; i++) {
-            traders.add(new BotTrader(i));
-        }
     }
 
     public static void simulateMarketDay() {
@@ -29,6 +24,8 @@ public class Market {
         ArrayList<Integer> shareExchangeList = new ArrayList<>();
         int totalShareExchange = 0;
         double marketSentiment = 0;
+
+        
 
         for (Stock stock : stocks) {
             filterByStock(stock.getSymbol(), trs);
@@ -48,8 +45,10 @@ public class Market {
             // NOTE: IF HAVE TIME, MAKE THE ALGORITHM
             // A BIT MORE ADVANCED BY CONSIDERING
             // OVERALL MARKET SENTIMENT
+            
+            double rawSentiment = 1 + (double) netShares / ((double) stock.getTotalShares() / 1000000);
+            if (stock.getSymbol().equals("AAPL")) System.out.println(rawSentiment + " " + netShares);
 
-            double rawSentiment = (double) netShares / ((double) stock.getTotalShares() / 320000000);
             double sentiment = rawSentiment * (0.95 + Math.random()/10);
             stock.setPrice(stock.getPrice() * sentiment);
 
@@ -60,17 +59,18 @@ public class Market {
     }
 
     // HELPER METHODS
-
-    public static void addTrader(AbstractTrader trader) {
-        traders.add(trader);
-    }
-
     public static ArrayList<AbstractTrader> getListOfTraders() {
         return new ArrayList<AbstractTrader>(traders);
     }
 
+
+
     public static long getCurrentDay() {
         return currentDay;
+    }
+
+    public static void addTrader(AbstractTrader trader) {
+        traders.add(trader);
     }
 
     public static Stock getStockByTicker(String ticker) {
