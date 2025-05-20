@@ -1,6 +1,6 @@
 @echo off
 
-mkdir target
+mkdir target 2>NUL
 
 REM cd and build files in src/
 javac *.java

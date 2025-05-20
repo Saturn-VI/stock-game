@@ -23,7 +23,7 @@ public class Market {
         ArrayList<Transaction> trs = copyTransactions();
         ArrayList<Integer> shareExchangeList = new ArrayList<>();
         int totalShareExchange = 0;
-        double marketSentiment = 0; 
+        double marketSentiment = 0;
 
         
 
@@ -48,9 +48,10 @@ public class Market {
             
             double rawSentiment = 1 + (double) netShares / ((double) stock.getTotalShares() / 1000000);
             if (stock.getSymbol().equals("AAPL")) System.out.println(rawSentiment + " " + netShares);
+
             double sentiment = rawSentiment * (0.95 + Math.random()/10);
             stock.setPrice(stock.getPrice() * sentiment);
-            
+
             shareExchangeList.add(netShares);
         }
 
@@ -59,17 +60,13 @@ public class Market {
 
     // HELPER METHODS
     public static ArrayList<AbstractTrader> getListOfTraders() {
-
         return new ArrayList<AbstractTrader>(traders);
-
     }
 
 
 
     public static long getCurrentDay() {
-
         return currentDay;
-
     }
 
     public static void addTrader(AbstractTrader trader) {

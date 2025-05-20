@@ -6,6 +6,8 @@ public class BotTrader extends AbstractTrader {
     "Matthew",
     "Joshua",
     "David",
+    "Bertie",
+    "Steve",
     "James",
     "Daniel",
     "Robert",
@@ -52,17 +54,18 @@ public class BotTrader extends AbstractTrader {
   };
 
   public BotTrader(int traderId) {
-    super(traderId, firstNames[(int)(Math.random() * firstNames.length)] + " " + lastNames[(int)(Math.random() * lastNames.length)]);
+    super(traderId, getRandomName());
   }
 
   public BotTrader(int traderId, int money) {
-    super(traderId, money, firstNames[(int)(Math.random() * firstNames.length)] + " " + lastNames[(int)(Math.random() * lastNames.length)]);
+    super(traderId, money, getRandomName());
   }
 
   public void simulateBotDay() {
     
   }
 
-  
-
+  public static String getRandomName() {
+    return firstNames[(int)(Math.random() * firstNames.length)] + " " + lastNames[(int)(Math.random() * lastNames.length)];
+  }
 }

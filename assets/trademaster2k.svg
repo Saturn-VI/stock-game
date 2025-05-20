@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="500"
+   height="150"
+   viewBox="0 0 500 150"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="trademaster2k.svg"
+   inkscape:export-filename="trademaster2k.png"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.8101934"
+     inkscape:cx="230.63834"
+     inkscape:cy="126.50582"
+     inkscape:window-width="2752"
+     inkscape:window-height="1071"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#1a1a1a;fill-opacity:1;stroke-width:6.00336;stroke-linejoin:round;stroke-miterlimit:5"
+       id="rect1"
+       width="150"
+       height="500"
+       x="-150"
+       y="0"
+       transform="rotate(-90)" />
+    <g
+       id="g3"
+       transform="translate(0.06400118,-330.28428)">
+      <text
+         xml:space="preserve"
+         style="font-size:74.6667px;font-family:Twemoji;-inkscape-font-specification:Twemoji;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;stroke:#e60000;stroke-width:10.9606;stroke-linejoin:round;stroke-miterlimit:5"
+         x="12.452258"
+         y="368.59845"
+         id="text1"><tspan
+           sodipodi:role="line"
+           x="12.452258"
+           y="368.59845"
+           style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:74.6667px;font-family:Montserrat;-inkscape-font-specification:'Montserrat Semi-Bold';fill:#2ecc40;fill-opacity:1;stroke:none"
+           id="tspan4"
+           dy="35">TradeMaster</tspan><tspan
+           sodipodi:role="line"
+           x="12.452258"
+           y="462.37283"
+           style="font-style:italic;font-variant:normal;font-weight:800;font-stretch:normal;font-size:74.6667px;font-family:Montserrat;-inkscape-font-specification:'Montserrat Ultra-Bold Italic';fill:#f5f5f5;fill-opacity:1;stroke:none"
+           id="tspan1"><tspan
+             style="font-size:58.6667px"
+             id="tspan3">2</tspan><tspan
+             style="font-size:48px;text-align:start;text-anchor:start"
+             id="tspan2"
+             dy="-7.5">000</tspan></tspan></text>
+      <path
+         style="fill:#f5f5f5;fill-opacity:1;stroke-width:10.9606;stroke-linejoin:round;stroke-miterlimit:5"
+         d="M 330.4044,425.92135 Z"
+         id="path2" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#7f8c8d;stroke-width:3.15077;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"
+         d="M 181.18035,426.10387 H 281.32249"
+         id="path3"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#7f8c8d;stroke-width:3.15077;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"
+         d="m 156.39254,438.23071 h 70.20795"
+         id="path3-1"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#7f8c8d;stroke-width:3.15077;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"
+         d="m 173.3752,450.35755 h 86.78689"
+         id="path3-6"
+         sodipodi:nodetypes="cc" />
+    </g>
+  </g>
+</svg>
