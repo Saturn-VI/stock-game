@@ -37,9 +37,9 @@ public class Stock {
         }
         return prices.get(day);
     }
-    
+
     public double getPrice() {
-        return prices.get(prices.size()-1);
+        return prices.get(prices.size() - 1);
     }
 
     public long getTotalShares() {
@@ -48,6 +48,22 @@ public class Stock {
 
     public double getMarketCap() {
         return getPrice() * totalShares;
+    }
+
+    public double getPriceChangeFromYesterday() {
+        if (prices.size() < 2) {
+            return 0;
+        }
+        return prices.get(prices.size() - 1) - prices.get(prices.size() - 2);
+    }
+
+    public double getPriceChangePercentFromYesterday() {
+        if (prices.size() < 2) {
+            return 0;
+        }
+        double prevPrice = prices.get(prices.size() - 2);
+        if (prevPrice == 0.0) return 0.0;
+        return (getPriceChangeFromYesterday() / prevPrice) * 100;
     }
 
     @Override

@@ -25,8 +25,6 @@ public class Market {
         int totalShareExchange = 0;
         double marketSentiment = 0;
 
-        
-
         for (Stock stock : stocks) {
             filterByStock(stock.getSymbol(), trs);
             filterByDays(5, trs);
@@ -45,11 +43,16 @@ public class Market {
             // NOTE: IF HAVE TIME, MAKE THE ALGORITHM
             // A BIT MORE ADVANCED BY CONSIDERING
             // OVERALL MARKET SENTIMENT
-            
-            double rawSentiment = 1 + (double) netShares / ((double) stock.getTotalShares() / 1000000);
-            if (stock.getSymbol().equals("AAPL")) System.out.println(rawSentiment + " " + netShares);
 
-            double sentiment = rawSentiment * (0.95 + Math.random()/10);
+            double rawSentiment =
+                1 +
+                (double) netShares /
+                ((double) stock.getTotalShares() / 1000000);
+            if (stock.getSymbol().equals("AAPL")) System.out.println(
+                rawSentiment + " " + netShares
+            );
+
+            double sentiment = rawSentiment * (0.95 + Math.random() / 10);
             stock.setPrice(stock.getPrice() * sentiment);
 
             shareExchangeList.add(netShares);
@@ -62,8 +65,6 @@ public class Market {
     public static ArrayList<AbstractTrader> getListOfTraders() {
         return new ArrayList<AbstractTrader>(traders);
     }
-
-
 
     public static long getCurrentDay() {
         return currentDay;
@@ -86,13 +87,13 @@ public class Market {
         int traderId,
         int sharesAmount,
         String stockName
-    ) throws NotEnoughMoneyException, StockDoesNotExistException {
+    ) throws NotEnoughSharesException, StockDoesNotExistException {
         Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
         }
         if (sharesAmount > getSharesOwnedInStock(traderId, stockName)) {
-            throw new NotEnoughMoneyException("");
+            throw new NotEnoughSharesException("");
         }
         transactions.add(
             new Transaction(
@@ -106,6 +107,16 @@ public class Market {
             )
         );
         currentTransactionIndex++;
+        GameWindow.getInstance().updateData();
+    }
+
+    public static void sellAllShares(int traderId, String stockName)
+        throws NotEnoughSharesException, StockDoesNotExistException {
+        sellShares(
+            traderId,
+            getSharesOwnedInStock(traderId, stockName),
+            stockName
+        );
     }
 
     public static void buyShares(
@@ -131,9 +142,17 @@ public class Market {
             )
         );
         currentTransactionIndex++;
+        GameWindow.getInstance().updateData();
     }
 
-    public static long getSharesOwnedInStock(int traderId, String stockName)
+    public static void buyAllShares(int traderId, String stockName)
+        throws NotEnoughMoneyException {
+        int sharesThatCanBeBought = (int) (getTraderMoneyAmount(traderId) /
+            getStockByTicker(stockName).getPrice());
+        buyShares(traderId, sharesThatCanBeBought, stockName);
+    }
+
+    public static int getSharesOwnedInStock(int traderId, String stockName)
         throws StockDoesNotExistException {
         AbstractTrader trader = getTraderById(traderId);
         if (trader == null) {
@@ -143,7 +162,7 @@ public class Market {
             traderId,
             copyTransactions()
         );
-        long sharesOwned = 0;
+        int sharesOwned = 0;
         Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
@@ -206,6 +225,9 @@ public class Market {
         double netMoneyFlow = 0;
 
         for (Transaction t : relevantTransactions) {
+            if (sharesOwned == 0) {
+                netMoneyFlow = 0; // reset if no shares at any point
+            }
             if (t.selling()) {
                 netMoneyFlow += (double) t.shares() * t.price();
                 sharesOwned -= t.shares();
@@ -307,7 +329,6 @@ public class Market {
         }
         return trs;
     }
-
 
     // removes every transaction that is older than days
     public static ArrayList<Transaction> filterByDays(

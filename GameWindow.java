@@ -15,6 +15,8 @@ public class GameWindow {
     private PortfolioPanel portfolioPanel;
     private JTabbedPane tabbedPane;
 
+    private static GameWindow singletonInstance;
+
     public GameWindow() {
         setupGameFrame();
     }
@@ -30,7 +32,11 @@ public class GameWindow {
 
         tabbedPane = new JTabbedPane();
         String[] tabNames = { "Home", "View stock", "Portfolio" };
-        JComponent[] tabPanels = { homeScrollPane, stockDisplayPanel, portfolioPanel }; // Home will be added as scrollpane
+        JComponent[] tabPanels = {
+            homeScrollPane,
+            stockDisplayPanel,
+            portfolioPanel,
+        }; // Home will be added as scrollpane
         Font tabFont = FontFactory.getFont("Bold", 18);
 
         for (int i = 0; i < 3; i++) {
@@ -78,6 +84,11 @@ public class GameWindow {
         if (portfolioPanel != null) {
             portfolioPanel.updatePortfolioInfo();
         }
+    }
+
+    public static GameWindow getInstance() {
+        if (singletonInstance == null) singletonInstance = new GameWindow();
+        return singletonInstance;
     }
 
     class BaseFontCellRenderer extends DefaultTableCellRenderer {
@@ -184,19 +195,26 @@ public class GameWindow {
             constraints.insets = new Insets(10, 10, 10, 10);
 
             ImageIcon icon = new ImageIcon("./assets/trademaster2k.png");
-            Image image = icon.getImage().getScaledInstance(333, 100, Image.SCALE_SMOOTH);
+            Image image = icon
+                .getImage()
+                .getScaledInstance(333, 100, Image.SCALE_SMOOTH);
             banner = new JLabel(new ImageIcon(image));
 
-            welcomeLabel = new JLabel("Welcome to TradeMaster 2000!", SwingConstants.CENTER);
+            welcomeLabel = new JLabel(
+                "Welcome to TradeMaster 2000!",
+                SwingConstants.CENTER
+            );
             welcomeLabel.setFont(FontFactory.getFont("Bold", 40));
 
             traderList = new JList<AbstractTrader>();
-            traderList.setSelectionModel(new DefaultListSelectionModel() {
-                @Override
-                public void setSelectionInterval(int index0, int index1) {
-                    // Disable selection
+            traderList.setSelectionModel(
+                new DefaultListSelectionModel() {
+                    @Override
+                    public void setSelectionInterval(int index0, int index1) {
+                        // Disable selection
+                    }
                 }
-            });
+            );
             traderList.setFocusable(false);
             traderList.setOpaque(false);
             traderList.setBackground(new Color(0, 0, 0, 0));
@@ -242,25 +260,44 @@ public class GameWindow {
         }
 
         public void updateHomePanelData() {
-            currentDayLabel.setText(String.format("Day %d", Market.getCurrentDay()));
-            traderList.setListData(Market.getListOfTraders().toArray(new AbstractTrader[0]));
+            currentDayLabel.setText(
+                String.format("Day %d", Market.getCurrentDay())
+            );
+            traderList.setListData(
+                Market.getListOfTraders().toArray(new AbstractTrader[0])
+            );
         }
     }
 
     class StockDisplayPanel extends JPanel {
 
         private String currentStockSymbol = null;
-        private JLabel nameLabel;
-        private JLabel priceLabel;
-        private JLabel priceChangeLabel;
-        private JLabel marketCapLabel;
-        private JLabel playerSharesLabel;
-        private JLabel playerValueLabel;
-        private JLabel playerProfitLabel;
-        private JLabel volumeLabel;
+        private JLabel nameLabel = new JLabel("Stock Name");
+        private JPanel buttonContainer = new JPanel();
+        private JButton buyButton = new JButton("Buy");
+        private JButton sellButton = new JButton("Sell");
+        private JButton buyAllButton = new JButton("Buy All");
+        private JButton sellAllButton = new JButton("Sell All");
+        private JLabel priceLabel = new JLabel("Price: ");
+        private JLabel priceChangeLabel = new JLabel("Change: ");
+        private JLabel marketCapLabel = new JLabel("Market Cap: ");
+        private JLabel playerSharesLabel = new JLabel("Your Shares: ");
+        private JLabel playerValueLabel = new JLabel("Your Holding Value: ");
+        private JLabel playerProfitLabel = new JLabel("Your Profit: ");
+        private JLabel volumeLabel = new JLabel("Volume (today): ");
         private JTable priceHistoryTable;
         private JTable transactionTable;
-        ArrayList<JLabel> jlabels;
+        private ArrayList<JLabel> jlabels = new ArrayList<JLabel>(
+            Arrays.asList(
+                priceLabel,
+                priceChangeLabel,
+                marketCapLabel,
+                playerSharesLabel,
+                playerValueLabel,
+                playerProfitLabel,
+                volumeLabel
+            )
+        );
         private JScrollPane priceHistoryScrollPane;
         private JScrollPane transactionScrollPane;
 
@@ -272,68 +309,167 @@ public class GameWindow {
             constraints.gridwidth = 2;
             constraints.anchor = GridBagConstraints.WEST;
 
-            nameLabel = new JLabel("Stock Name");
             nameLabel.setFont(FontFactory.getFont("Bold", 32));
 
-            priceLabel = new JLabel("Price: ");
+            buyButton.addActionListener(e -> {
+                try {
+                    Market.buyShares(
+                        Main.playerTraderId,
+                        1,
+                        currentStockSymbol
+                    );
+                } catch (NotEnoughMoneyException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "You do not have enough money to buy this stock.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            });
+            sellButton.addActionListener(e -> {
+                try {
+                    Market.sellShares(
+                        Main.playerTraderId,
+                        1,
+                        currentStockSymbol
+                    );
+                } catch (NotEnoughSharesException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "You do not have any shares in this stock.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                } catch (StockDoesNotExistException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "This stock does not exist. Something has gone *very* wrong.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            });
+            buyAllButton.addActionListener(e -> {
+                try {
+                    Market.buyAllShares(
+                        Main.playerTraderId,
+                        currentStockSymbol
+                    );
+                } catch (NotEnoughMoneyException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "You do not have enough money to buy this stock.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            });
+            sellAllButton.addActionListener(e -> {
+                try {
+                    Market.sellAllShares(
+                        Main.playerTraderId,
+                        currentStockSymbol
+                    );
+                } catch (NotEnoughSharesException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "You do not have any shares in this stock.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                } catch (StockDoesNotExistException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "This stock does not exist. Something has gone *very* wrong.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            });
+
+            buttonContainer.setLayout(new FlowLayout());
+            buttonContainer.setComponentOrientation(
+                ComponentOrientation.LEFT_TO_RIGHT
+            );
+            buyButton.setFont(FontFactory.getFont("Medium", 20));
+            sellButton.setFont(FontFactory.getFont("Medium", 20));
+            buyAllButton.setFont(FontFactory.getFont("Medium", 20));
+            sellAllButton.setFont(FontFactory.getFont("Medium", 20));
+            buttonContainer.add(buyButton);
+            buttonContainer.add(sellButton);
+            buttonContainer.add(buyAllButton);
+            buttonContainer.add(sellAllButton);
+
             priceLabel.setFont(FontFactory.getFont("Bold", 28));
 
-            priceChangeLabel = new JLabel("Change: ");
             priceChangeLabel.setFont(FontFactory.getFont("Medium", 20));
 
-            marketCapLabel = new JLabel("Market Cap: ");
             marketCapLabel.setFont(FontFactory.getFont("Medium", 20));
 
-            playerSharesLabel = new JLabel("Your Shares: ");
             playerSharesLabel.setFont(FontFactory.getFont("Medium", 20));
 
-            playerValueLabel = new JLabel("Your Holding Value: ");
             playerValueLabel.setFont(FontFactory.getFont("Medium", 20));
 
-            playerProfitLabel = new JLabel("Your Profit: ");
             playerProfitLabel.setFont(FontFactory.getFont("Medium", 20));
 
-            volumeLabel = new JLabel("Volume (today): ");
             volumeLabel.setFont(FontFactory.getFont("Medium", 20));
 
-            jlabels = new ArrayList<JLabel>(Arrays.asList(
-                nameLabel,
-                priceLabel,
-                priceChangeLabel,
-                marketCapLabel,
-                playerSharesLabel,
-                playerValueLabel,
-                playerProfitLabel,
-                volumeLabel
-            ));
+            ArrayList<JComponent> components = new ArrayList<JComponent>(
+                Arrays.asList(
+                    nameLabel,
+                    buttonContainer,
+                    priceLabel,
+                    priceChangeLabel,
+                    marketCapLabel,
+                    playerSharesLabel,
+                    playerValueLabel,
+                    playerProfitLabel,
+                    volumeLabel
+                )
+            );
 
             constraints.gridx = 0;
-            for (int i = 0; i < jlabels.size(); i++) {
+            for (int i = 0; i < components.size(); i++) {
                 constraints.gridy++;
-                this.add(jlabels.get(i), constraints);
+                this.add(components.get(i), constraints);
             }
 
             constraints.gridy++;
-            priceHistoryTable = new JTable(new Object[0][0], new String[]{"Day", "Price"});
+            priceHistoryTable = new JTable(
+                new Object[0][0],
+                new String[] { "Day", "Price" }
+            );
             priceHistoryTable.setFont(FontFactory.getFont("Medium", 16));
             priceHistoryTable.setRowHeight(20);
             priceHistoryScrollPane = new JScrollPane(priceHistoryTable);
             TitledBorder priceHistoryBorder;
-            priceHistoryBorder = BorderFactory.createTitledBorder("Price History (last 10 days)");
-            priceHistoryBorder.setTitleFont(FontFactory.getFont("SemiBold", 18));
+            priceHistoryBorder = BorderFactory.createTitledBorder(
+                "Price History (last 10 days)"
+            );
+            priceHistoryBorder.setTitleFont(
+                FontFactory.getFont("SemiBold", 18)
+            );
             priceHistoryBorder.setTitleJustification(TitledBorder.CENTER);
             priceHistoryScrollPane.setBorder(priceHistoryBorder);
             priceHistoryScrollPane.setPreferredSize(new Dimension(300, 220));
             this.add(priceHistoryScrollPane, constraints);
 
             constraints.gridy++;
-            transactionTable = new JTable(new Object[0][0], new String[]{"Day", "Trader", "Buy/Sell", "Shares", "Price"});
+            transactionTable = new JTable(
+                new Object[0][0],
+                new String[] { "Day", "Trader", "Buy/Sell", "Shares", "Price" }
+            );
             transactionTable.setFont(FontFactory.getFont("Medium", 16));
             transactionTable.setRowHeight(20);
             transactionScrollPane = new JScrollPane(transactionTable);
             TitledBorder transactionTableBorder;
-            transactionTableBorder = BorderFactory.createTitledBorder("Recent Transactions");
-            transactionTableBorder.setTitleFont(FontFactory.getFont("SemiBold", 18));
+            transactionTableBorder = BorderFactory.createTitledBorder(
+                "Recent Transactions"
+            );
+            transactionTableBorder.setTitleFont(
+                FontFactory.getFont("SemiBold", 18)
+            );
             transactionTableBorder.setTitleJustification(TitledBorder.CENTER);
             transactionScrollPane.setBorder(transactionTableBorder);
             transactionScrollPane.setPreferredSize(new Dimension(600, 220));
@@ -349,9 +485,29 @@ public class GameWindow {
             for (JLabel label : jlabels) {
                 label.setText("");
             }
+            buyButton.setVisible(false);
+            sellButton.setVisible(false);
+            buyAllButton.setVisible(false);
+            sellAllButton.setVisible(false);
             nameLabel.setText(reason);
-            priceHistoryTable.setModel(new javax.swing.table.DefaultTableModel(new Object[0][0], new String[]{"Day", "Price"}));
-            transactionTable.setModel(new javax.swing.table.DefaultTableModel(new Object[0][0], new String[]{"Day", "Trader", "Buy/Sell", "Shares", "Price"}));
+            priceHistoryTable.setModel(
+                new javax.swing.table.DefaultTableModel(
+                    new Object[0][0],
+                    new String[] { "Day", "Price" }
+                )
+            );
+            transactionTable.setModel(
+                new javax.swing.table.DefaultTableModel(
+                    new Object[0][0],
+                    new String[] {
+                        "Day",
+                        "Trader",
+                        "Buy/Sell",
+                        "Shares",
+                        "Price",
+                    }
+                )
+            );
         }
 
         public void updateStockDisplayData() {
@@ -365,36 +521,50 @@ public class GameWindow {
                     noStock("Stock not found");
                     return;
                 }
-                nameLabel.setText(String.format("%s (%s)", stock.getName(), stock.getSymbol()));
+                nameLabel.setText(
+                    String.format("%s (%s)", stock.getName(), stock.getSymbol())
+                );
+                buyButton.setVisible(true);
+                sellButton.setVisible(true);
+                buyAllButton.setVisible(true);
+                sellAllButton.setVisible(true);
                 double price = stock.getPrice();
                 priceLabel.setText(String.format("Price: $%.2f", price));
 
-                // we do a little mathing
-                double prevPrice = price;
-                if (Market.getCurrentDay() > 0) {
-                    try {
-                        prevPrice = stock.getPriceByDay((int)Market.getCurrentDay() - 1);
-                    } catch (DayDoesNotExistException e) {
-                        prevPrice = price;
-                    }
-                }
-                double change = price - prevPrice;
-                double percentChange = prevPrice != 0 ? (change / prevPrice) * 100.0 : 0.0;
-                priceChangeLabel.setText(String.format("Change from yesterday: %+.2f (%+.2f%%)", change, percentChange));
+                double change = stock.getPriceChangeFromYesterday();
+
+                priceChangeLabel.setText(
+                    String.format(
+                        "Change from yesterday: %+.2f (%+.2f%%)",
+                        change,
+                        stock.getPriceChangePercentFromYesterday()
+                    )
+                );
                 if (change > 0) {
                     priceChangeLabel.setForeground(Color.GREEN.darker());
                 } else if (change < 0) {
                     priceChangeLabel.setForeground(Color.RED);
                 } else {
-                    priceChangeLabel.setForeground(UIManager.getColor("Label.foreground"));
+                    priceChangeLabel.setForeground(
+                        UIManager.getColor("Label.foreground")
+                    );
                 }
-                NumberFormat shortFormatter = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
-                NumberFormat longFormatter = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
+                NumberFormat shortFormatter =
+                    NumberFormat.getCompactNumberInstance(
+                        Locale.US,
+                        NumberFormat.Style.SHORT
+                    );
+                NumberFormat longFormatter =
+                    NumberFormat.getCompactNumberInstance(
+                        Locale.US,
+                        NumberFormat.Style.SHORT
+                    );
                 shortFormatter.setMinimumFractionDigits(2);
                 longFormatter.setMinimumFractionDigits(2);
-                marketCapLabel.setText(String.format("Market Cap: $%s (~%s total shares)",
-                    shortFormatter.format(
-                        stock.getMarketCap()),
+                marketCapLabel.setText(
+                    String.format(
+                        "Market Cap: $%s (~%s total shares)",
+                        shortFormatter.format(stock.getMarketCap()),
                         longFormatter.format(stock.getTotalShares())
                     )
                 );
@@ -404,27 +574,42 @@ public class GameWindow {
                 double holdingValue = 0;
                 double profit = 0;
                 try {
-                    sharesOwned = Market.getSharesOwnedInStock(Main.playerTraderId, stock.getSymbol());
+                    sharesOwned = Market.getSharesOwnedInStock(
+                        Main.playerTraderId,
+                        stock.getSymbol()
+                    );
                     holdingValue = sharesOwned * price;
-                    profit = Market.getCurrentTraderProfitOnStock(Main.playerTraderId, stock.getSymbol());
+                    profit = Market.getCurrentTraderProfitOnStock(
+                        Main.playerTraderId,
+                        stock.getSymbol()
+                    );
                 } catch (StockDoesNotExistException e) {
                     e.printStackTrace();
                 }
                 playerSharesLabel.setText("Your Shares: " + sharesOwned);
-                playerValueLabel.setText(String.format("Your Holding Value: $%.2f", holdingValue));
-                playerProfitLabel.setText(String.format("Your Overall Profit: $%.2f", profit));
+                playerValueLabel.setText(
+                    String.format("Your Holding Value: $%.2f", holdingValue)
+                );
+                playerProfitLabel.setText(
+                    String.format("Your Overall Profit: $%.2f", profit)
+                );
 
                 // Calculate volume for today
                 int volume = 0;
                 ArrayList<Transaction> transactions = Market.copyTransactions();
-                transactions = Market.filterByStock(stock.getSymbol(), transactions);
+                transactions = Market.filterByStock(
+                    stock.getSymbol(),
+                    transactions
+                );
                 for (Transaction t : Market.filterByDays(0, transactions)) { // gets transactions made today
                     volume += t.shares();
                 }
-                volumeLabel.setText(String.format("Volume (today): %d shares", volume));
+                volumeLabel.setText(
+                    String.format("Volume (today): %d shares", volume)
+                );
 
                 // Price history (last 10 days)
-                int days = (int)Market.getCurrentDay() + 1;
+                int days = (int) Market.getCurrentDay() + 1;
                 int historyLen = Math.min(days, 10);
                 Object[][] priceHistoryData = new Object[historyLen][2];
                 for (int i = 0; i < historyLen; i++) {
@@ -436,23 +621,36 @@ public class GameWindow {
                     priceHistoryData[i][0] = "Day " + dayIdx;
                     priceHistoryData[i][1] = String.format("$%.2f", dayPrice);
                 }
-                priceHistoryTable.setModel(new javax.swing.table.DefaultTableModel(priceHistoryData, new String[]{"Day", "Price"}));
+                priceHistoryTable.setModel(
+                    new javax.swing.table.DefaultTableModel(
+                        priceHistoryData,
+                        new String[] { "Day", "Price" }
+                    )
+                );
 
                 // Recent transactions (last 10 for this stock)
                 ArrayList<Transaction> stockTransactions = new ArrayList<>();
-                ArrayList<Transaction> allTransactions = Market.copyTransactions();
+                ArrayList<Transaction> allTransactions =
+                    Market.copyTransactions();
                 for (Transaction t : allTransactions) {
-                    if (t.stock() != null && t.stock().getSymbol().equals(stock.getSymbol())) {
+                    if (
+                        t.stock() != null &&
+                        t.stock().getSymbol().equals(stock.getSymbol())
+                    ) {
                         stockTransactions.add(t);
                     }
                 }
 
                 // Sort by day, most recent first
-                stockTransactions.sort((a, b) -> Long.compare(b.dayTransactionMade(), a.dayTransactionMade()));
+                stockTransactions.sort((a, b) ->
+                    Long.compare(b.dayTransactionMade(), a.dayTransactionMade())
+                );
 
                 // Take only the first 10
                 if (stockTransactions.size() > 10) {
-                    stockTransactions = new ArrayList<>(stockTransactions.subList(0, 10));
+                    stockTransactions = new ArrayList<>(
+                        stockTransactions.subList(0, 10)
+                    );
                 }
 
                 Object[][] txData = new Object[stockTransactions.size()][5];
@@ -460,12 +658,25 @@ public class GameWindow {
                     Transaction t = stockTransactions.get(i);
                     txData[i][0] = "Day " + t.dayTransactionMade();
                     AbstractTrader trader = Market.getTraderById(t.traderId());
-                    txData[i][1] = trader != null ? trader.getName() : ("Trader " + t.traderId());
+                    txData[i][1] = trader != null
+                        ? trader.getName()
+                        : ("Trader " + t.traderId());
                     txData[i][2] = t.selling() ? "Sell" : "Buy";
                     txData[i][3] = t.shares();
                     txData[i][4] = String.format("$%.2f", t.price());
                 }
-                transactionTable.setModel(new javax.swing.table.DefaultTableModel(txData, new String[]{"Day", "Trader", "Buy/Sell", "Shares", "Price"}));
+                transactionTable.setModel(
+                    new javax.swing.table.DefaultTableModel(
+                        txData,
+                        new String[] {
+                            "Day",
+                            "Trader",
+                            "Buy/Sell",
+                            "Shares",
+                            "Price",
+                        }
+                    )
+                );
             } catch (Exception e) {
                 e.printStackTrace();
                 noStock("Error loading stock data: " + e.getMessage());
@@ -556,12 +767,21 @@ public class GameWindow {
                                     "Cell value: " +
                                     stockInfoTable.getValueAt(row, column)
                                 );
+                            } else {
+                                return;
                             }
 
-                            if (column == 0) {
-                                String stockSymbol = ((CustomTableModel) stockInfoTable.getModel()).getTickerForRow(row);
-                                System.out.println(String.format("Going to stock display panel for stock %s", stockSymbol));
-                                GameWindow.this.goToStockDisplayPanel(stockSymbol);}
+                            String stockSymbol =
+                                ((CustomTableModel) stockInfoTable.getModel()).getTickerForRow(
+                                        row
+                                    );
+                            System.out.println(
+                                String.format(
+                                    "Going to stock display panel for stock %s",
+                                    stockSymbol
+                                )
+                            );
+                            GameWindow.this.goToStockDisplayPanel(stockSymbol);
                         }
                     }
                 }

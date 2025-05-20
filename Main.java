@@ -9,7 +9,7 @@ public class Main {
         initializeTraders();
         DataReader.getStocks();
         for (int i = 0; i < 15; i++) runMarketTests();
-        SwingUtilities.invokeLater(() -> new GameWindow());
+        // SwingUtilities.invokeLater(() -> new GameWindow());
     }
 
     public static void runMarketTests() {
