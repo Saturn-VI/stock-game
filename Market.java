@@ -20,6 +20,7 @@ public class Market {
     }
 
     public static void simulateMarketDay() {
+        System.out.println("\nDay " + currentDay);
         ArrayList<Transaction> trs = copyTransactions();
         ArrayList<Integer> shareExchangeList = new ArrayList<>();
         int totalShareExchange = 0;
