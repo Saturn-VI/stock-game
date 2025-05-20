@@ -10,6 +10,7 @@ public class GameWindow {
 
     private JFrame gameFrame;
     private HomePanel homePanel;
+    private StockListPanel stockListPanel;
     private JScrollPane homeScrollPane;
     private StockDisplayPanel stockDisplayPanel;
     private PortfolioPanel portfolioPanel;
@@ -26,20 +27,22 @@ public class GameWindow {
         gameFrame.setLayout(new BorderLayout());
 
         homePanel = new HomePanel();
+        stockListPanel = new StockListPanel();
         homeScrollPane = new JScrollPane(homePanel);
         stockDisplayPanel = new StockDisplayPanel();
         portfolioPanel = new PortfolioPanel();
 
         tabbedPane = new JTabbedPane();
-        String[] tabNames = { "Home", "View stock", "Portfolio" };
+        String[] tabNames = { "Home", "Stock List", "View stock", "Portfolio" };
         JComponent[] tabPanels = {
             homeScrollPane,
+            stockListPanel,
             stockDisplayPanel,
             portfolioPanel,
         }; // Home will be added as scrollpane
         Font tabFont = FontFactory.getFont("Bold", 18);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < tabPanels.length; i++) {
             tabbedPane.addTab("", tabPanels[i]);
             JLabel tabLabel = new JLabel("", SwingConstants.CENTER);
             tabbedPane.setTabComponentAt(i, tabLabel);
@@ -266,6 +269,13 @@ public class GameWindow {
             traderList.setListData(
                 Market.getListOfTraders().toArray(new AbstractTrader[0])
             );
+        }
+    }
+
+    class StockListPanel extends JPanel {
+
+        public StockListPanel() {
+            super();
         }
     }
 

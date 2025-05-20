@@ -112,11 +112,15 @@ public class Market {
 
     public static void sellAllShares(int traderId, String stockName)
         throws NotEnoughSharesException, StockDoesNotExistException {
-        sellShares(
-            traderId,
-            getSharesOwnedInStock(traderId, stockName),
-            stockName
-        );
+        try {
+            sellShares(
+                traderId,
+                getSharesOwnedInStock(traderId, stockName),
+                stockName
+            );
+        } catch (NotEnoughSharesException | StockDoesNotExistException e) {
+            throw e;
+        }
     }
 
     public static void buyShares(
@@ -149,7 +153,11 @@ public class Market {
         throws NotEnoughMoneyException {
         int sharesThatCanBeBought = (int) (getTraderMoneyAmount(traderId) /
             getStockByTicker(stockName).getPrice());
-        buyShares(traderId, sharesThatCanBeBought, stockName);
+        try {
+            buyShares(traderId, sharesThatCanBeBought, stockName);
+        } catch (NotEnoughMoneyException e) {
+            throw e;
+        }
     }
 
     public static int getSharesOwnedInStock(int traderId, String stockName)
