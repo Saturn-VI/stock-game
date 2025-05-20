@@ -8,8 +8,8 @@ public class Main {
         Market.initializeMarket();
         initializeTraders();
         DataReader.getStocks();
-        for (int i=0; i<15; i++) runMarketTests();
-        //SwingUtilities.invokeLater(() -> new GameWindow());
+        for (int i = 0; i < 15; i++) runMarketTests();
+        SwingUtilities.invokeLater(() -> new GameWindow());
     }
 
     public static void runMarketTests() {
@@ -24,7 +24,6 @@ public class Main {
             //Market.buyShares(playerTraderId, 5, symbol);
             //stock.setPrice(stock.getPrice() + 5);
             System.out.println(playerTrader);
-            
         } catch (NotEnoughMoneyException e) {
             System.out.println("Not enough money to buy shares.");
         }
@@ -33,7 +32,7 @@ public class Main {
 
     public static void initializeTraders() {
         Market.addTrader(new PlayerTrader(0, 10000));
-        for (int i=1; i<10; i++) {
+        for (int i = 1; i < 10; i++) {
             Market.addTrader(new BotTrader(i));
         }
     }
