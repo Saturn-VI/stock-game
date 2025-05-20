@@ -58,6 +58,19 @@ public class Market {
     }
 
     // HELPER METHODS
+    public static ArrayList<AbstractTrader> getListOfTraders() {
+
+        return new ArrayList<AbstractTrader>(traders);
+
+    }
+
+
+
+    public static long getCurrentDay() {
+
+        return currentDay;
+
+    }
 
     public static void addTrader(AbstractTrader trader) {
         traders.add(trader);
