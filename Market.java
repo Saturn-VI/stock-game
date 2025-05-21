@@ -55,8 +55,7 @@ public class Market {
 
     public static void simulateMarketDay() {
         System.out.println("\nDay " + currentDay);
-        ArrayList<Transaction> trs = copyTransactions();
-        ArrayList<Integer> shareExchangeList = new ArrayList<>();
+        ArrayList<Transaction> trs;
 
         for (Stock stock : stocks) {
             if (Math.random() < 0.005) {
@@ -70,13 +69,18 @@ public class Market {
         simulateAllBots();
 
         for (Stock stock : stocks) {
+            trs = copyTransactions();
+
             filterByStock(stock.getSymbol(), trs);
             filterByDays(5, trs);
 
             int netShares = 0; // selling a lot will result in negative
             for (Transaction tr : trs) {
-                if (tr.selling()) netShares -= tr.shares();
-                else netShares += tr.shares();
+                if (tr.selling()) {
+                    netShares -= tr.shares();
+                } else {
+                    netShares += tr.shares();
+                }
             }
 
             // extremely basic algorithm that takes in a sentiment
@@ -100,14 +104,13 @@ public class Market {
 
             stock.setPrice(sentiment);
 
-            shareExchangeList.add(netShares);
-
             // statement below updates the sentiments to be closer to 1
             evSentiments.put(stock, Math.pow(evSentiments.get(stock), 0.6));
             hidSentiments.put(stock, Math.pow(evSentiments.get(stock), 0.6));
         }
 
         currentDay++;
+        GameWindow.getInstance().updateData();
     }
 
     public static void simulateAllBots() {
@@ -120,6 +123,7 @@ public class Market {
     public static String randomEvent(Stock stock) {
         double eventSentiment = 1;
         int goodOrBad = (int) (Math.random() * 2);
+        // 0 = bad, 1 = good
         String randomMessage = "";
         if (goodOrBad == 0) {
             randomMessage = BADEVENTS[(int) (Math.random() * BADEVENTS.length)];
@@ -129,6 +133,12 @@ public class Market {
                     GOODEVENTS.length)];
             eventSentiment = 1.05 + Math.random() / 3;
         }
+        GameWindow.getInstance()
+            .triggerStockEvent(
+                goodOrBad == 1,
+                stock.getSymbol(),
+                randomMessage
+            );
         evSentiments.put(stock, evSentiments.get(stock) * eventSentiment);
         return String.format(randomMessage, stock.toString()) + eventSentiment;
     }

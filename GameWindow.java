@@ -92,6 +92,31 @@ public class GameWindow {
         }
     }
 
+    public void triggerStockEvent(
+        boolean isGood,
+        String stockName,
+        String eventMessage
+    ) {
+        if (
+            Market.getListOfStocksForTrader(Main.playerTraderId).contains(
+                stockName
+            )
+        ) {
+            // the player owns this stock
+            String message = String.format(
+                "A stock you own (%s) has been affected by a major event:%n%s",
+                stockName,
+                eventMessage
+            );
+            JOptionPane.showMessageDialog(
+                gameFrame,
+                message,
+                "TM2K Alert",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+    }
+
     public static GameWindow getInstance() {
         if (singletonInstance == null) singletonInstance = new GameWindow();
         return singletonInstance;
@@ -289,7 +314,6 @@ public class GameWindow {
             simulateMarketDayButton.setFont(FontFactory.getFont("Bold", 24));
             simulateMarketDayButton.addActionListener(e -> {
                 Market.simulateMarketDay();
-                GameWindow.this.updateData();
             });
 
             constraints.gridx = 1;
@@ -320,16 +344,14 @@ public class GameWindow {
             currentDayLabel.setText(
                 String.format("Day %d", Market.getCurrentDay())
             );
-            ArrayList<AbstractTrader> traders =
-                Market.getListOfTraders();
+            ArrayList<AbstractTrader> traders = Market.getListOfTraders();
             Collections.sort(traders);
             Collections.reverse(traders);
-            traderList.setListData(
-                traders.toArray(new AbstractTrader[0])
-            );
+            traderList.setListData(traders.toArray(new AbstractTrader[0]));
         }
 
-        class PlayerHighlighterListCellRenderer extends DefaultListCellRenderer {
+        class PlayerHighlighterListCellRenderer
+            extends DefaultListCellRenderer {
 
             public Component getListCellRendererComponent(
                 JList<?> list,
@@ -365,7 +387,6 @@ public class GameWindow {
 
         public StockListPanel() {
             super();
-
             this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
             stockTable = new JTable(new StockListPanelTableModel());
@@ -389,7 +410,9 @@ public class GameWindow {
             stockTable
                 .getColumnModel()
                 .getColumn(2)
-                .setCellRenderer(new ChangeAndPercentageTableCellRenderer(true));
+                .setCellRenderer(
+                    new ChangeAndPercentageTableCellRenderer(true)
+                );
             // column 3: Shares owned (no color, right align)
             stockTable
                 .getColumnModel()
@@ -432,11 +455,9 @@ public class GameWindow {
                 }
             );
 
-
             stockListScrollPane = new JScrollPane(stockTable);
 
             this.add(stockListScrollPane);
-
         }
 
         public void updateStockListData() {
@@ -474,7 +495,10 @@ public class GameWindow {
                                 stock.getPrice(),
                                 stock.getPriceChangeFromYesterday(),
                                 stock.getPriceChangePercentFromYesterday(),
-                                Market.getSharesOwnedInStock(Main.playerTraderId, stock.getSymbol())
+                                Market.getSharesOwnedInStock(
+                                    Main.playerTraderId,
+                                    stock.getSymbol()
+                                )
                             )
                         );
                     }
@@ -499,13 +523,16 @@ public class GameWindow {
                 switch (col) {
                     case 0:
                         // Name
-                        return Market.getStockByTicker(tableData.get(row).stockSymbol()).toString();
+                        return Market.getStockByTicker(
+                            tableData.get(row).stockSymbol()
+                        ).toString();
                     case 1:
                         // Price
                         return tableData.get(row).stockPrice();
                     case 2:
                         // Change vs Yesterday
-                        return String.format("%.2f (%.2f%%)",
+                        return String.format(
+                            "%.2f (%.2f%%)",
                             tableData.get(row).changeFromYesterday(),
                             tableData.get(row).changePercent()
                         );
@@ -708,7 +735,9 @@ public class GameWindow {
             );
             priceHistoryTable.setFont(FontFactory.getFont("Medium", 16));
             priceHistoryTable.setRowHeight(20);
-            priceHistoryTable.getTableHeader().setFont(FontFactory.getFont("SemiBold", 18));
+            priceHistoryTable
+                .getTableHeader()
+                .setFont(FontFactory.getFont("SemiBold", 18));
             priceHistoryScrollPane = new JScrollPane(priceHistoryTable);
             TitledBorder priceHistoryBorder;
             priceHistoryBorder = BorderFactory.createTitledBorder(
@@ -728,7 +757,9 @@ public class GameWindow {
                 new String[] { "Day", "Trader", "Buy/Sell", "Shares", "Price" }
             );
             transactionTable.setFont(FontFactory.getFont("Medium", 16));
-            transactionTable.getTableHeader().setFont(FontFactory.getFont("SemiBold", 18));
+            transactionTable
+                .getTableHeader()
+                .setFont(FontFactory.getFont("SemiBold", 18));
             transactionTable.setRowHeight(20);
             transactionScrollPane = new JScrollPane(transactionTable);
             TitledBorder transactionTableBorder;
@@ -952,7 +983,11 @@ public class GameWindow {
         }
 
         class NonEditableTableModel extends DefaultTableModel {
-            public NonEditableTableModel(Object[][] data, String[] columnNames) {
+
+            public NonEditableTableModel(
+                Object[][] data,
+                String[] columnNames
+            ) {
                 super(data, columnNames);
             }
 
