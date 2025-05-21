@@ -95,7 +95,20 @@ public class BotTrader extends AbstractTrader {
                 }
             }
         }
-    }
+
+      // loop thru all the stocks and insta sell if > 1.1 or < 0.9 profit
+      for (String stock : Market.getListOfStocksForTrader(getTraderId())) { 
+          try {
+            double profit = Market.getProfitPercentageOnStock(getTraderId(), stock);
+            if (profit < 0.9 || profit > 1.1) {
+              Market.sellAllShares(getTraderId(), stock);
+              System.out.println(this.toString() + " has sold all shares of " + stock);
+            }
+          } catch (NotEnoughSharesException | StockDoesNotExistException e) {
+            System.out.println("There has been an error with selling all stocks.");
+          } 
+        }
+      }
 
     public static String getRandomName() {
         return firstNames[random.nextInt(firstNames.length)] + " " + lastNames[random.nextInt(lastNames.length)];

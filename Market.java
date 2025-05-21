@@ -9,6 +9,35 @@ public class Market {
     private static long currentDay;
     private static long currentTransactionIndex;
 
+    private static HashMap<Stock, Double> evSentiments = new HashMap<>();
+    private static HashMap<Stock, Double> hidSentiments = new HashMap<>();
+
+    private static final String[] GOODEVENTS = {
+        "The president has found an interest in %s. This stock might grow.",
+        "There has been a CEO replacement in %s. Investors are hopeful that this new leadership help grow the company.",
+        "%s has unveiled groundbreaking technology. Investors are excited to see what it means for the future of the company.",
+        "%s has shifted to more ethical workplace practices. This may help boost stock growth for that company.",
+        "The government has given %s a huge contract. Eager investors are immediately buying.",
+        "Reports show that %s has beaten revenue and profit expectations. Experts predict it may continue into the future.",
+        "Central bank lowers interest rates. $s may experience positive impact.",
+        "%s expands into a larger market. Investors project growth for this company.",
+        "The newest product of %s is hugely popular among consumers. It has exceeded sales targets and the company is now on track for further growth.",
+        "Investors have recently placed %s as their top buys. Growth is predicted.",
+    };
+
+    private static final String[] BADEVENTS = {
+        "Reports show that %s did not meet revenue expectations. This company might experience a downturn.",
+        "The CEO of %s was found to be involved in a scandal. The future of this company does not look good.",
+        "%s has been found to be abusing its workers. Support for this company is waning.",
+        "The CEO of %s was assassinated last week. Stock prices are expected to drop.",
+        "New technologies in other countries are predicted to surpass %s. This company will experience some falls.",
+        "Rising interest rates will likely harm %s. Experts recommend selling now.",
+        "Geopolitical tensions will negatively affect %s. Its stock is predicted to drop.",
+        "Worker unrest halts production in %s. Stock prices will drop.",
+        "%s was hit by a large cyber attack that compromised tons of data. Investors are looking to sell.",
+        "%s has been actively making their produts less and less appealing to consumers. Experts suggest to sell now.",
+    };
+
     public static void initializeMarket() {
         // read in from checkpoint file
         stocks = DataReader.getStocks();
@@ -17,14 +46,26 @@ public class Market {
         traders = new ArrayList<AbstractTrader>();
         currentDay = 0;
         currentTransactionIndex = 0;
+
+        for (Stock stock : getStocks()) {
+            evSentiments.put(stock, 1.0);
+            hidSentiments.put(stock, 1.0);
+        }
     }
 
     public static void simulateMarketDay() {
         System.out.println("\nDay " + currentDay);
         ArrayList<Transaction> trs = copyTransactions();
         ArrayList<Integer> shareExchangeList = new ArrayList<>();
-        int totalShareExchange = 0;
-        double marketSentiment = 0;
+
+        for (Stock stock : stocks) {
+            if (Math.random() < 0.005) {
+                System.out.println(randomEvent(stock));
+            }
+            if (Math.random() < 0.02) {
+                System.out.println(hiddenEvent(stock));
+            }
+        }
 
         simulateAllBots();
 
@@ -47,14 +88,23 @@ public class Market {
             // A BIT MORE ADVANCED BY CONSIDERING
             // OVERALL MARKET SENTIMENT
 
-            double rawSentiment = 1 + (double) netShares / 1000;
+            double rawSentiment = 1 + (double) netShares / 10000;
             double sentiment = rawSentiment * (0.975 + Math.random() / 20);
+
+            sentiment *= evSentiments.get(stock);
+            sentiment *= hidSentiments.get(stock);
+
             if (stock.getSymbol().equals("AAPL")) System.out.println(
                 rawSentiment + " " + sentiment + " " + netShares
             );
-            stock.setPrice(stock.getPrice() * sentiment);
+
+            stock.setPrice(sentiment);
 
             shareExchangeList.add(netShares);
+
+            // statement below updates the sentiments to be closer to 1
+            evSentiments.put(stock, Math.pow(evSentiments.get(stock), 0.6));
+            hidSentiments.put(stock, Math.pow(evSentiments.get(stock), 0.6));
         }
 
         currentDay++;
@@ -64,6 +114,33 @@ public class Market {
         for (AbstractTrader trader : getListOfTraders()) {
             trader.simulateTraderDay();
         }
+    }
+
+    // events have a stronger effect on stock prices than hidden events, but are rarer.
+    public static String randomEvent(Stock stock) {
+        double eventSentiment = 1;
+        int goodOrBad = (int) (Math.random() * 2);
+        String randomMessage = "";
+        if (goodOrBad == 0) {
+            randomMessage = BADEVENTS[(int) (Math.random() * BADEVENTS.length)];
+            eventSentiment = 0.75 + Math.random() / 5;
+        } else {
+            randomMessage = GOODEVENTS[(int) (Math.random() *
+                    GOODEVENTS.length)];
+            eventSentiment = 1.05 + Math.random() / 3;
+        }
+        evSentiments.put(stock, evSentiments.get(stock) * eventSentiment);
+        return String.format(randomMessage, stock.toString()) + eventSentiment;
+    }
+
+    // the hidden events make stocks more volatile and the overall game more challenging.
+    public static String hiddenEvent(Stock stock) {
+        double hiddenSentiment = 0.9;
+        hiddenSentiment += Math.random() * 0.2;
+        hidSentiments.put(stock, hiddenSentiment);
+        return (
+            stock.getSymbol() + " got a hidden sentiment of " + hiddenSentiment
+        );
     }
 
     // HELPER METHODS
@@ -258,6 +335,33 @@ public class Market {
         }
 
         return (double) sharesOwned * stock.getPrice() + netMoneyFlow;
+    }
+
+    public static double getProfitPercentageOnStock(
+        int traderId,
+        String stockName
+    ) throws StockDoesNotExistException {
+        double initialCost = 0;
+        ArrayList<Transaction> relevantTransactions = getTransactionsForTrader(
+            traderId,
+            stockName
+        );
+        Stock stock = getStockByTicker(stockName);
+        if (stock == null) {
+            throw new StockDoesNotExistException("");
+        }
+
+        for (Transaction t : relevantTransactions) {
+            if (t.selling()) {
+                initialCost -= (double) t.shares() * t.price();
+            } else {
+                initialCost += (double) t.shares() * t.price();
+            }
+        }
+        return (
+            (initialCost + getCurrentTraderProfitOnStock(traderId, stockName)) /
+            initialCost
+        );
     }
 
     public static ArrayList<Transaction> getTransactionsForTrader(
