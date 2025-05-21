@@ -81,6 +81,9 @@ public class GameWindow {
         if (homePanel != null && homePanel instanceof HomePanel) {
             homePanel.updateHomePanelData();
         }
+        if (stockListPanel != null) {
+            stockListPanel.updateStockListData();
+        }
         if (stockDisplayPanel != null) {
             stockDisplayPanel.updateStockDisplayData();
         }
@@ -127,6 +130,56 @@ public class GameWindow {
             );
             if (cellFont != null) {
                 c.setFont(cellFont);
+            }
+            return c;
+        }
+    }
+
+    class ChangeAndPercentageTableCellRenderer extends BaseFontCellRenderer {
+
+        private boolean colorize;
+
+        public ChangeAndPercentageTableCellRenderer(boolean colorize) {
+            super(true);
+            this.colorize = colorize;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(
+            JTable table,
+            Object value,
+            boolean isSelected,
+            boolean hasFocus,
+            int row,
+            int column
+        ) {
+            Component c = super.getTableCellRendererComponent(
+                table,
+                value,
+                isSelected,
+                hasFocus,
+                row,
+                column
+            );
+
+            // try to parse a double from it
+            String[] splitString = value.toString().split(" ");
+            Double change = 0.0;
+            try {
+                change = Double.parseDouble(splitString[0]);
+            } catch (NullPointerException | NumberFormatException e) {
+                // If it can't be parsed, just return the default
+                c.setForeground(UIManager.getColor("Label.foreground"));
+                return c;
+            }
+            if (colorize) {
+                if (change > 0) {
+                    c.setForeground(Color.GREEN.darker());
+                } else if (change < 0) {
+                    c.setForeground(Color.RED);
+                } else {
+                    c.setForeground(UIManager.getColor("Label.foreground"));
+                }
             }
             return c;
         }
@@ -297,7 +350,7 @@ public class GameWindow {
                     if (trader.getTraderId() == Main.playerTraderId) {
                         setBackground(Color.YELLOW);
                     } else {
-                        setBackground(UIManager.getColor("List.background"));
+                        setBackground(new Color(0, 0, 0, 0));
                     }
                 }
                 return this;
@@ -307,8 +360,178 @@ public class GameWindow {
 
     class StockListPanel extends JPanel {
 
+        private JScrollPane stockListScrollPane;
+        private JTable stockTable;
+
         public StockListPanel() {
             super();
+
+            this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+            stockTable = new JTable(new StockListPanelTableModel());
+            JTableHeader tableHeader = stockTable.getTableHeader();
+            tableHeader.setFont(FontFactory.getFont("SemiBold", 18));
+            stockTable.setRowHeight(24);
+            stockTable.setFillsViewportHeight(true);
+
+            // Set custom renderers for columns
+            // column 0: Name (regular, left align)
+            stockTable
+                .getColumnModel()
+                .getColumn(0)
+                .setCellRenderer(new BaseFontCellRenderer(false));
+            // column 1: Price (no color)
+            stockTable
+                .getColumnModel()
+                .getColumn(1)
+                .setCellRenderer(new CurrencyTableCellRenderer(false));
+            // column 2: Change vs yesterday (color)
+            stockTable
+                .getColumnModel()
+                .getColumn(2)
+                .setCellRenderer(new ChangeAndPercentageTableCellRenderer(true));
+            // column 3: Shares owned (no color, right align)
+            stockTable
+                .getColumnModel()
+                .getColumn(3)
+                .setCellRenderer(new BaseFontCellRenderer(true));
+
+            stockTable.addMouseListener(
+                new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 2) {
+                            JTable target = (JTable) e.getSource();
+                            int row = target.rowAtPoint(e.getPoint());
+                            int column = target.columnAtPoint(e.getPoint());
+
+                            if (row != -1 && column != -1) {
+                                System.out.println(
+                                    "Clicked on cell: (" +
+                                    row +
+                                    ", " +
+                                    column +
+                                    ")"
+                                );
+                            } else {
+                                return;
+                            }
+
+                            String stockSymbol =
+                                ((StockListPanelTableModel) stockTable.getModel()).getTickerForRow(
+                                        row
+                                    );
+                            System.out.println(
+                                String.format(
+                                    "Going to stock display panel for stock %s",
+                                    stockSymbol
+                                )
+                            );
+                            GameWindow.this.goToStockDisplayPanel(stockSymbol);
+                        }
+                    }
+                }
+            );
+
+
+            stockListScrollPane = new JScrollPane(stockTable);
+
+            this.add(stockListScrollPane);
+
+        }
+
+        public void updateStockListData() {
+            ((StockListPanelTableModel) stockTable.getModel()).tableDataChanged();
+        }
+
+        class StockListPanelTableModel extends AbstractTableModel {
+
+            ArrayList<StockListTableInfo> tableData;
+
+            public StockListPanelTableModel() {
+                tableData = new ArrayList<StockListTableInfo>();
+            }
+
+            private static final String[] columnNames = new String[] {
+                "Stock",
+                "Price",
+                "Change vs Yesterday",
+                "Shares Owned",
+            };
+
+            public String getTickerForRow(int row) {
+                return tableData.get(row).stockSymbol();
+            }
+
+            public void tableDataChanged() {
+                tableData.clear();
+                try {
+                    for (String stockName : Market.getStockNames()) {
+                        Stock stock = Market.getStockByTicker(stockName);
+                        tableData.add(
+                            new StockListTableInfo(
+                                stock.getName(),
+                                stock.getSymbol(),
+                                stock.getPrice(),
+                                stock.getPriceChangeFromYesterday(),
+                                stock.getPriceChangePercentFromYesterday(),
+                                Market.getSharesOwnedInStock(Main.playerTraderId, stock.getSymbol())
+                            )
+                        );
+                    }
+                } catch (StockDoesNotExistException e) {}
+                fireTableDataChanged();
+            }
+
+            public String getColumnName(int col) {
+                return columnNames[col];
+            }
+
+            public int getRowCount() {
+                return tableData.size();
+            }
+
+            public int getColumnCount() {
+                return columnNames.length;
+            }
+
+            public Object getValueAt(int row, int col) {
+                // Keep in mind that the list of stocks is alphabetical
+                switch (col) {
+                    case 0:
+                        // Name
+                        return Market.getStockByTicker(tableData.get(row).stockSymbol()).toString();
+                    case 1:
+                        // Price
+                        return tableData.get(row).stockPrice();
+                    case 2:
+                        // Change vs Yesterday
+                        return String.format("%.2f (%.2f%%)",
+                            tableData.get(row).changeFromYesterday(),
+                            tableData.get(row).changePercent()
+                        );
+                    case 3:
+                        // Shares Owned
+                        return tableData.get(row).sharesInStock();
+                }
+                // Should never happen
+                return null;
+            }
+
+            public Class<?> getColumnClass(int columnIndex) {
+                switch (columnIndex) {
+                    case 0:
+                        return String.class;
+                    case 1:
+                        return Double.class;
+                    case 2:
+                        return Long.class;
+                    case 3:
+                        return Double.class;
+                    case 4:
+                        return Double.class;
+                }
+                return Object.class;
+            }
         }
     }
 

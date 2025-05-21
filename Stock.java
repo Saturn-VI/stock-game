@@ -82,6 +82,6 @@ public class Stock {
 
     @Override
     public String toString() {
-        return String.format("%s $%.2f", symbol, getPrice());
+        return String.format("%s (%s)", getName(), getSymbol());
     }
 }

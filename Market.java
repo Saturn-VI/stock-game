@@ -118,7 +118,7 @@ public class Market {
         try {
             sellShares(
                 traderId,
-                getSharesOwnedInStock(traderId, stockName),
+                Math.max(getSharesOwnedInStock(traderId, stockName), 1), // do this so the user can get an error
                 stockName
             );
         } catch (NotEnoughSharesException | StockDoesNotExistException e) {
@@ -154,8 +154,8 @@ public class Market {
 
     public static void buyAllShares(int traderId, String stockName)
         throws NotEnoughMoneyException {
-        int sharesThatCanBeBought = (int) (getTraderMoneyAmount(traderId) /
-            getStockByTicker(stockName).getPrice());
+        int sharesThatCanBeBought = Math.max((int) (getTraderMoneyAmount(traderId) /
+            getStockByTicker(stockName).getPrice()), 1); // do this so the user can get an error
         try {
             buyShares(traderId, sharesThatCanBeBought, stockName);
         } catch (NotEnoughMoneyException e) {
@@ -286,6 +286,14 @@ public class Market {
 
     public static ArrayList<Stock> getStocks() {
         return stocks;
+    }
+
+    public static ArrayList<String> getStockNames() {
+        ArrayList<String> out = new ArrayList<String>();
+        for (Stock stock : stocks) {
+            out.add(stock.getSymbol());
+        }
+        return out;
     }
 
     public static ArrayList<AbstractTrader> getTraders() {
