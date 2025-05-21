@@ -48,8 +48,10 @@ public class Market {
             // OVERALL MARKET SENTIMENT
 
             double rawSentiment = 1 + (double) netShares / 1000;
-            double sentiment = rawSentiment * (0.975 + Math.random()/20);
-            if (stock.getSymbol().equals("AAPL")) System.out.println(rawSentiment + " " + sentiment + " " + netShares);
+            double sentiment = rawSentiment * (0.975 + Math.random() / 20);
+            if (stock.getSymbol().equals("AAPL")) System.out.println(
+                rawSentiment + " " + sentiment + " " + netShares
+            );
             stock.setPrice(stock.getPrice() * sentiment);
 
             shareExchangeList.add(netShares);
@@ -110,7 +112,9 @@ public class Market {
             )
         );
         currentTransactionIndex++;
-        GameWindow.getInstance().updateData();
+        if (traderId == Main.playerTraderId) {
+            GameWindow.getInstance().updateData(); // small optimization
+        }
     }
 
     public static void sellAllShares(int traderId, String stockName)
@@ -149,13 +153,18 @@ public class Market {
             )
         );
         currentTransactionIndex++;
-        GameWindow.getInstance().updateData();
+        if (traderId == Main.playerTraderId) {
+            GameWindow.getInstance().updateData(); // small optimization
+        }
     }
 
     public static void buyAllShares(int traderId, String stockName)
         throws NotEnoughMoneyException {
-        int sharesThatCanBeBought = Math.max((int) (getTraderMoneyAmount(traderId) /
-            getStockByTicker(stockName).getPrice()), 1); // do this so the user can get an error
+        int sharesThatCanBeBought = Math.max(
+            (int) (getTraderMoneyAmount(traderId) /
+                getStockByTicker(stockName).getPrice()),
+            1
+        ); // do this so the user can get an error
         try {
             buyShares(traderId, sharesThatCanBeBought, stockName);
         } catch (NotEnoughMoneyException e) {
