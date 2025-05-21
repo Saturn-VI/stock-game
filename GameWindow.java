@@ -425,35 +425,19 @@ public class GameWindow {
             stockTable.addMouseListener(
                 new MouseAdapter() {
                     public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 2) {
-                            JTable target = (JTable) e.getSource();
-                            int row = target.rowAtPoint(e.getPoint());
-                            int column = target.columnAtPoint(e.getPoint());
+                        JTable target = (JTable) e.getSource();
+                        int row = target.rowAtPoint(e.getPoint());
+                        int column = target.columnAtPoint(e.getPoint());
 
-                            if (row != -1 && column != -1) {
-                                System.out.println(
-                                    "Clicked on cell: (" +
-                                    row +
-                                    ", " +
-                                    column +
-                                    ")"
-                                );
-                            } else {
-                                return;
-                            }
-
-                            String stockSymbol =
-                                ((StockListPanelTableModel) stockTable.getModel()).getTickerForRow(
-                                        row
-                                    );
-                            System.out.println(
-                                String.format(
-                                    "Going to stock display panel for stock %s",
-                                    stockSymbol
-                                )
-                            );
-                            GameWindow.this.goToStockDisplayPanel(stockSymbol);
+                        if (row != -1 && column != -1) {
+                            return;
                         }
+
+                        String stockSymbol =
+                            ((StockListPanelTableModel) stockTable.getModel()).getTickerForRow(
+                                    row
+                                );
+                        GameWindow.this.goToStockDisplayPanel(stockSymbol);
                     }
                 }
             );
@@ -1064,35 +1048,19 @@ public class GameWindow {
             stockInfoTable.addMouseListener(
                 new MouseAdapter() {
                     public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 2) {
-                            JTable target = (JTable) e.getSource();
-                            int row = target.rowAtPoint(e.getPoint());
-                            int column = target.columnAtPoint(e.getPoint());
+                        JTable target = (JTable) e.getSource();
+                        int row = target.rowAtPoint(e.getPoint());
+                        int column = target.columnAtPoint(e.getPoint());
 
-                            if (row != -1 && column != -1) {
-                                System.out.println(
-                                    "Clicked on cell: (" +
-                                    row +
-                                    ", " +
-                                    column +
-                                    ")"
-                                );
-                            } else {
-                                return;
-                            }
-
-                            String stockSymbol =
-                                ((CustomTableModel) stockInfoTable.getModel()).getTickerForRow(
-                                        row
-                                    );
-                            System.out.println(
-                                String.format(
-                                    "Going to stock display panel for stock %s",
-                                    stockSymbol
-                                )
-                            );
-                            GameWindow.this.goToStockDisplayPanel(stockSymbol);
+                        if (row == -1 && column == -1) {
+                            return;
                         }
+
+                        String stockSymbol =
+                            ((CustomTableModel) stockInfoTable.getModel()).getTickerForRow(
+                                    row
+                                );
+                        GameWindow.this.goToStockDisplayPanel(stockSymbol);
                     }
                 }
             );
