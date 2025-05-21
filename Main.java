@@ -1,5 +1,3 @@
-import javax.swing.SwingUtilities;
-
 public class Main {
 
     public static final int playerTraderId = 0;
@@ -9,7 +7,6 @@ public class Main {
         initializeTraders();
         DataReader.getStocks();
         for (int i = 0; i < 15; i++) runMarketTests();
-        //SwingUtilities.invokeLater(() -> new GameWindow());
         printAllTraders();
     }
 
@@ -33,11 +30,7 @@ public class Main {
 
     public static void initializeTraders() {
         Market.addTrader(new PlayerTrader(0, 10000));
-<<<<<<< HEAD
-        for (int i = 1; i < 10; i++) {
-=======
-        for (int i=1; i<20; i++) {
->>>>>>> origin/new-market-setup
+        for (int i = 1; i < 20; i++) {
             Market.addTrader(new BotTrader(i));
         }
     }

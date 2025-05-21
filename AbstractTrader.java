@@ -1,4 +1,4 @@
-public abstract class AbstractTrader {
+public abstract class AbstractTrader implements Comparable<AbstractTrader> {
 
     private final String name;
     private final double initialMoney;
@@ -28,6 +28,10 @@ public abstract class AbstractTrader {
 
     public String getName() {
         return name;
+    }
+
+    public int compareTo(AbstractTrader other) {
+        return (int) (Market.getTraderMoneyAmount(getTraderId()) - Market.getTraderMoneyAmount(other.getTraderId()));
     }
 
     public String toString() {

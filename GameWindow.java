@@ -73,7 +73,7 @@ public class GameWindow {
     }
 
     public void goToStockDisplayPanel(String stock) {
-        tabbedPane.setSelectedIndex(1);
+        tabbedPane.setSelectedIndex(2);
         stockDisplayPanel.setViewStock(stock);
     }
 
@@ -221,6 +221,7 @@ public class GameWindow {
             traderList.setFocusable(false);
             traderList.setOpaque(false);
             traderList.setBackground(new Color(0, 0, 0, 0));
+            traderList.setCellRenderer(new PlayerHighlighterListCellRenderer());
             TitledBorder traderListBorder;
             traderListBorder = BorderFactory.createTitledBorder("Traders");
             traderListBorder.setTitleJustification(TitledBorder.CENTER);
@@ -266,9 +267,41 @@ public class GameWindow {
             currentDayLabel.setText(
                 String.format("Day %d", Market.getCurrentDay())
             );
+            ArrayList<AbstractTrader> traders =
+                Market.getListOfTraders();
+            Collections.sort(traders);
+            Collections.reverse(traders);
             traderList.setListData(
-                Market.getListOfTraders().toArray(new AbstractTrader[0])
+                traders.toArray(new AbstractTrader[0])
             );
+        }
+
+        class PlayerHighlighterListCellRenderer extends DefaultListCellRenderer {
+
+            public Component getListCellRendererComponent(
+                JList<?> list,
+                Object value,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus
+            ) {
+                super.getListCellRendererComponent(
+                    list,
+                    value,
+                    index,
+                    isSelected,
+                    cellHasFocus
+                );
+                if (value instanceof AbstractTrader) {
+                    AbstractTrader trader = (AbstractTrader) value;
+                    if (trader.getTraderId() == Main.playerTraderId) {
+                        setBackground(Color.YELLOW);
+                    } else {
+                        setBackground(UIManager.getColor("List.background"));
+                    }
+                }
+                return this;
+            }
         }
     }
 
@@ -452,6 +485,7 @@ public class GameWindow {
             );
             priceHistoryTable.setFont(FontFactory.getFont("Medium", 16));
             priceHistoryTable.setRowHeight(20);
+            priceHistoryTable.getTableHeader().setFont(FontFactory.getFont("SemiBold", 18));
             priceHistoryScrollPane = new JScrollPane(priceHistoryTable);
             TitledBorder priceHistoryBorder;
             priceHistoryBorder = BorderFactory.createTitledBorder(
@@ -471,6 +505,7 @@ public class GameWindow {
                 new String[] { "Day", "Trader", "Buy/Sell", "Shares", "Price" }
             );
             transactionTable.setFont(FontFactory.getFont("Medium", 16));
+            transactionTable.getTableHeader().setFont(FontFactory.getFont("SemiBold", 18));
             transactionTable.setRowHeight(20);
             transactionScrollPane = new JScrollPane(transactionTable);
             TitledBorder transactionTableBorder;
@@ -501,13 +536,13 @@ public class GameWindow {
             sellAllButton.setVisible(false);
             nameLabel.setText(reason);
             priceHistoryTable.setModel(
-                new javax.swing.table.DefaultTableModel(
+                new NonEditableTableModel(
                     new Object[0][0],
                     new String[] { "Day", "Price" }
                 )
             );
             transactionTable.setModel(
-                new javax.swing.table.DefaultTableModel(
+                new NonEditableTableModel(
                     new Object[0][0],
                     new String[] {
                         "Day",
@@ -632,7 +667,7 @@ public class GameWindow {
                     priceHistoryData[i][1] = String.format("$%.2f", dayPrice);
                 }
                 priceHistoryTable.setModel(
-                    new javax.swing.table.DefaultTableModel(
+                    new NonEditableTableModel(
                         priceHistoryData,
                         new String[] { "Day", "Price" }
                     )
@@ -676,7 +711,7 @@ public class GameWindow {
                     txData[i][4] = String.format("$%.2f", t.price());
                 }
                 transactionTable.setModel(
-                    new javax.swing.table.DefaultTableModel(
+                    new NonEditableTableModel(
                         txData,
                         new String[] {
                             "Day",
@@ -690,6 +725,17 @@ public class GameWindow {
             } catch (Exception e) {
                 e.printStackTrace();
                 noStock("Error loading stock data: " + e.getMessage());
+            }
+        }
+
+        class NonEditableTableModel extends DefaultTableModel {
+            public NonEditableTableModel(Object[][] data, String[] columnNames) {
+                super(data, columnNames);
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make all cells non-editable
             }
         }
     }
@@ -747,10 +793,7 @@ public class GameWindow {
                 .setCellRenderer(new CurrencyTableCellRenderer(true));
 
             JTableHeader tableHeader = stockInfoTable.getTableHeader();
-            Font headerFont = FontFactory.getFont("SemiBold", 18);
-            if (headerFont != null) {
-                tableHeader.setFont(headerFont);
-            }
+            tableHeader.setFont(FontFactory.getFont("SemiBold", 18));
 
             stockInfoTable.setPreferredScrollableViewportSize(
                 new Dimension(800, 20)
@@ -772,10 +815,6 @@ public class GameWindow {
                                     ", " +
                                     column +
                                     ")"
-                                );
-                                System.out.println(
-                                    "Cell value: " +
-                                    stockInfoTable.getValueAt(row, column)
                                 );
                             } else {
                                 return;
@@ -875,7 +914,6 @@ public class GameWindow {
                         );
                     }
                 } catch (StockDoesNotExistException e) {}
-                System.out.println(tableData);
                 fireTableDataChanged();
             }
 
