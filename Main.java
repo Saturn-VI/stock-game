@@ -9,7 +9,8 @@ public class Main {
         initializeTraders();
         DataReader.getStocks();
         for (int i = 0; i < 15; i++) runMarketTests();
-        // SwingUtilities.invokeLater(() -> new GameWindow());
+        //SwingUtilities.invokeLater(() -> new GameWindow());
+        printAllTraders();
     }
 
     public static void runMarketTests() {
@@ -32,8 +33,18 @@ public class Main {
 
     public static void initializeTraders() {
         Market.addTrader(new PlayerTrader(0, 10000));
+<<<<<<< HEAD
         for (int i = 1; i < 10; i++) {
+=======
+        for (int i=1; i<20; i++) {
+>>>>>>> origin/new-market-setup
             Market.addTrader(new BotTrader(i));
+        }
+    }
+
+    public static void printAllTraders() {
+        for (int i=0; i<20; i++) {
+            System.out.println(Market.getTraderById(i));
         }
     }
 }

@@ -16,6 +16,8 @@ public abstract class AbstractTrader {
         this.name = name;
     }
 
+    public abstract void simulateTraderDay();
+
     public double getInitialMoney() {
         return initialMoney;
     }

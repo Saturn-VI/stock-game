@@ -7,4 +7,8 @@ public class PlayerTrader extends AbstractTrader {
   public PlayerTrader(int traderId, int money) {
     super(traderId, money, "You");
   }
+
+  public void simulateTraderDay() {
+    
+  }
 }
