@@ -6,7 +6,7 @@ public class Main {
         Market.initializeMarket();
         initializeTraders();
         DataReader.getStocks();
-        for (int i = 0; i < 15; i++) runMarketTests();
+        for (int i = 0; i < 30; i++) runMarketTests();
         printAllTraders();
     }
 
