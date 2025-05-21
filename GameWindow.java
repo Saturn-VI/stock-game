@@ -106,7 +106,10 @@ public class GameWindow {
             String message = String.format(
                 "A stock you own (%s) has been affected by a major event:%n%s",
                 stockName,
-                eventMessage
+                String.format(
+                    eventMessage,
+                    Market.getStockByTicker(stockName).getName()
+                )
             );
             JOptionPane.showMessageDialog(
                 gameFrame,

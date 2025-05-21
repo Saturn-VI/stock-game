@@ -1,3 +1,4 @@
+import java.awt.geom.Area;
 import java.util.*;
 
 public class Market {
@@ -102,7 +103,7 @@ public class Market {
                 rawSentiment + " " + sentiment + " " + netShares
             );
 
-            stock.setPrice(sentiment);
+            stock.setPrice(stock.getPrice() * sentiment);
 
             // statement below updates the sentiments to be closer to 1
             evSentiments.put(stock, Math.pow(evSentiments.get(stock), 0.6));
