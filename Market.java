@@ -30,7 +30,7 @@ public class Market {
         
         for (Stock stock : stocks) {
             filterByStock(stock.getSymbol(), trs);
-            filterByDays(5, trs);
+            filterByDays(3, trs);
 
             int netShares = 0; // selling a lot will result in negative
             for (Transaction tr : trs) {
@@ -47,7 +47,7 @@ public class Market {
             // A BIT MORE ADVANCED BY CONSIDERING
             // OVERALL MARKET SENTIMENT
             
-            double rawSentiment = 1 + (double) netShares / 1000;
+            double rawSentiment = 1 + (double) netShares / 10000;
             double sentiment = rawSentiment * (0.975 + Math.random()/20);
             if (stock.getSymbol().equals("AAPL")) System.out.println(rawSentiment + " " + sentiment + " " + netShares);
             stock.setPrice(stock.getPrice() * sentiment);

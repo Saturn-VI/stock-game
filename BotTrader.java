@@ -90,7 +90,6 @@ public class BotTrader extends AbstractTrader {
           Market.sellShares(getTraderId(), 1, traderStocks.get(i));
           System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") sold a share of " + Market.getStockByTicker(traderStocks.get(i)).toString());
         } catch (Exception e) {
-          i--;
           continue;
         }
       }
