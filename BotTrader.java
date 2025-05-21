@@ -45,14 +45,16 @@ public class BotTrader extends AbstractTrader {
     "Porsche",
     "Van Damme",
     "Goldman",
-    "Ferrero",
+    "Silvers",
     "Wallstreet",
     "Betts",
     "Buckett",
     "Shockey",
     "Broker",
     "Dollarwise",
-    "Poore"
+    "Poore",
+    "Riche",
+    "Debt"
   };
 
   public BotTrader(int traderId) {
@@ -86,7 +88,7 @@ public class BotTrader extends AbstractTrader {
       for (int i=0; i<(int)(Math.random() * 5); i++) {
         try {
           Market.sellShares(getTraderId(), 1, traderStocks.get(i));
-          System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") sold a share of " + traderStocks.get(i).toString());
+          System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") sold a share of " + Market.getStockByTicker(traderStocks.get(i)).toString());
         } catch (Exception e) {
           i--;
           continue;
