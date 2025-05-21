@@ -53,7 +53,9 @@ public class BotTrader extends AbstractTrader {
         "Shockey",
         "Broker",
         "Dollarwise",
-        "Poore"
+        "Poore",
+        "Riche",
+        "Debt"
     };
 
     public BotTrader(int traderId) {
@@ -66,35 +68,34 @@ public class BotTrader extends AbstractTrader {
 
     @Override
     public void simulateTraderDay(){
-    int sharesBought = 0;
-    int sharesToBuy = (int) (Math.random() * 5);
-    for (Stock stock : Market.getStocks()) {
-        try {
-            if (Math.random()*20 < 1) {
-                Market.buyShares(getTraderId(), 1, stock.getSymbol());
-                sharesBought++;
-                System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") bought a share of " + stock.toString());
-            }
-        } catch (NotEnoughMoneyException e) {
-            continue;
-        }
-        if (sharesBought >= sharesToBuy) break;
-    }
-
-    ArrayList<String> traderStocks = Market.getListOfStocksForTrader(getTraderId());
-    Collections.shuffle(traderStocks);
-    if (Market.getCurrentDay() > 3) {
-        for (int i=0; i<(int)(Math.random() * 5); i++) {
+        int sharesBought = 0;
+        int sharesToBuy = (int) (Math.random() * 5);
+        for (Stock stock : Market.getStocks()) {
             try {
-                Market.sellShares(getTraderId(), 1, traderStocks.get(i));
-                System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") sold a share of " + traderStocks.get(i).toString());
-            } catch (Exception e) {
-                i--;
+                if (Math.random()*20 < 1) {
+                    Market.buyShares(getTraderId(), 1, stock.getSymbol());
+                    sharesBought++;
+                    System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") bought a share of " + stock.toString());
+                }
+            } catch (NotEnoughMoneyException e) {
                 continue;
             }
+            if (sharesBought >= sharesToBuy) break;
         }
-    }
 
+        ArrayList<String> traderStocks = Market.getListOfStocksForTrader(getTraderId());
+        Collections.shuffle(traderStocks);
+        if (Market.getCurrentDay() > 3) {
+        for (int i=0; i<(int)(Math.random() * 5); i++) {
+                try {
+                    Market.sellShares(getTraderId(), 1, traderStocks.get(i));
+                    System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") sold a share of " + Market.getStockByTicker(traderStocks.get(i)).toString());
+                } catch (Exception e) {
+                    i--;
+                    continue;
+                }
+            }
+        }
     }
 
     public static String getRandomName() {

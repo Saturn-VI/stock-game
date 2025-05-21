@@ -47,7 +47,7 @@ public class Market {
             // A BIT MORE ADVANCED BY CONSIDERING
             // OVERALL MARKET SENTIMENT
 
-            double rawSentiment = 1 + (double) netShares / ((double) stock.getTotalShares() / 1000000);
+            double rawSentiment = 1 + (double) netShares / 1000;
             double sentiment = rawSentiment * (0.975 + Math.random()/20);
             if (stock.getSymbol().equals("AAPL")) System.out.println(rawSentiment + " " + sentiment + " " + netShares);
             stock.setPrice(stock.getPrice() * sentiment);
