@@ -429,7 +429,7 @@ public class GameWindow {
                         int row = target.rowAtPoint(e.getPoint());
                         int column = target.columnAtPoint(e.getPoint());
 
-                        if (row != -1 && column != -1) {
+                        if (row == -1 || column == -1) {
                             return;
                         }
 
@@ -437,7 +437,8 @@ public class GameWindow {
                             ((StockListPanelTableModel) stockTable.getModel()).getTickerForRow(
                                     row
                                 );
-                        GameWindow.this.goToStockDisplayPanel(stockSymbol);
+
+                        GameWindow.getInstance().goToStockDisplayPanel(stockSymbol);
                     }
                 }
             );
@@ -1052,7 +1053,7 @@ public class GameWindow {
                         int row = target.rowAtPoint(e.getPoint());
                         int column = target.columnAtPoint(e.getPoint());
 
-                        if (row == -1 && column == -1) {
+                        if (row == -1 || column == -1) {
                             return;
                         }
 
@@ -1060,7 +1061,7 @@ public class GameWindow {
                             ((CustomTableModel) stockInfoTable.getModel()).getTickerForRow(
                                     row
                                 );
-                        GameWindow.this.goToStockDisplayPanel(stockSymbol);
+                        GameWindow.getInstance().goToStockDisplayPanel(stockSymbol);
                     }
                 }
             );
