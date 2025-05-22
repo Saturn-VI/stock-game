@@ -41,7 +41,6 @@ public class Market {
     public static void initializeMarket() {
         // read in from checkpoint file
         stocks = DataReader.getStocks();
-        //System.out.println(stocks);
         transactions = new ArrayList<Transaction>();
         traders = new ArrayList<AbstractTrader>();
         currentDay = 0;
@@ -54,7 +53,7 @@ public class Market {
     }
 
     public static void simulateMarketDay() {
-        System.out.println("\nDay " + currentDay);
+        System.out.println("Day " + currentDay);
         ArrayList<Transaction> trs;
 
         for (Stock stock : stocks) {
@@ -97,10 +96,6 @@ public class Market {
 
             sentiment *= evSentiments.get(stock);
             sentiment *= hidSentiments.get(stock);
-
-            if (stock.getSymbol().equals("AAPL")) System.out.println(
-                rawSentiment + " " + sentiment + " " + netShares
-            );
 
             stock.setPrice(stock.getPrice() * sentiment);
 
