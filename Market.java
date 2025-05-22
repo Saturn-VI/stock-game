@@ -175,6 +175,9 @@ public class Market {
         int sharesAmount,
         String stockName
     ) throws NotEnoughSharesException, StockDoesNotExistException {
+        if (sharesAmount <= 0) {
+            throw new NotEnoughSharesException("");
+        }
         Stock stock = getStockByTicker(stockName);
         if (stock == null) {
             throw new StockDoesNotExistException("");
@@ -217,6 +220,9 @@ public class Market {
         int sharesAmount,
         String stockName
     ) throws NotEnoughMoneyException {
+        if (sharesAmount <= 0) {
+            throw new NotEnoughMoneyException("");
+        }
         double moneyAmount = getTraderMoneyAmount(traderId);
         Stock stock = getStockByTicker(stockName);
         double estimatedCost = (double) sharesAmount * stock.getPrice();
@@ -373,7 +379,8 @@ public class Market {
         double netWorth = getTraderMoneyAmount(traderId);
         for (String stockName : getListOfStocksForTrader(traderId)) {
             try {
-                netWorth += getSharesOwnedInStock(traderId, stockName) *
+                netWorth +=
+                    getSharesOwnedInStock(traderId, stockName) *
                     getStockByTicker(stockName).getPrice();
             } catch (StockDoesNotExistException e) {}
         }
