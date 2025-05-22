@@ -369,6 +369,17 @@ public class Market {
         );
     }
 
+    public static double getTraderNetWorth(int traderId) {
+        double netWorth = getTraderMoneyAmount(traderId);
+        for (String stockName : getListOfStocksForTrader(traderId)) {
+            try {
+                netWorth += getSharesOwnedInStock(traderId, stockName) *
+                    getStockByTicker(stockName).getPrice();
+            } catch (StockDoesNotExistException e) {}
+        }
+        return netWorth;
+    }
+
     public static ArrayList<Transaction> getTransactionsForTrader(
         int traderId
     ) {
