@@ -5,16 +5,16 @@ Example GUI
     - [x] Stock view tab
         - [x] Historical stock data (can be artificial)
     - [x] Portfolio tab
-        - [ ] PlayerTrader class
-    - [ ] Top stocks tab
-        - [ ] Flesh out Market class
-- [ ] Make traders
+        - [x] PlayerTrader class
+    - [x] Top stocks tab
+        - [x] Flesh out Market class
+- [x] Make traders
     - [x] Finish abstract trader class
-    - [ ] Trading bots
-    - [ ] Player trader class
+    - [x] Trading bots
+    - [x] Player trader class
 - [x] Make stock system
-    - [ ] determine how the stock moves
+    - [x] determine how the stock moves
     - [x] allow traders to interact with market
 - [x] Pull data from real stocks
     - [x] Get top 50 stocks by market value? (shouldn't be too many)
-- [ ] Make sure to run GameWindow.this.update() whenever a stock is purchased
+- [x] Make sure to run GameWindow.this.update() whenever a stock is purchased

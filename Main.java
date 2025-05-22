@@ -6,8 +6,28 @@ public class Main {
         Market.initializeMarket();
         initializeTraders();
         DataReader.getStocks();
-        for (int i = 0; i < 15; i++) runMarketTests();
-        printAllTraders();
+        // printAllTraders();
+
+        // buying automatically instantiates GameWindow
+        buyRandomStartingStocks();
+        Market.simulateMarketDay();
+    }
+
+    public static void buyRandomStartingStocks() {
+        for (Stock stock : Market.getStocks()) {
+            if (Math.random() < 1 - (3 * (1.0 / Market.getStocks().size()))) {
+                continue;
+            }
+            int sharesToBuy = (int) (Math.random() * 5) + 2;
+            try {
+                Market.buyShares(playerTraderId, sharesToBuy, stock.getSymbol());
+            } catch (NotEnoughMoneyException e) {
+                System.out.println("Not enough money to buy shares.");
+            }
+        }
+        if (Market.getListOfStocksForTrader(playerTraderId).size() < 4) {
+            buyRandomStartingStocks(); // just make sure the player starts with a bunch of stocks
+        }
     }
 
     public static void runMarketTests() {

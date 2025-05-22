@@ -31,10 +31,10 @@ public abstract class AbstractTrader implements Comparable<AbstractTrader> {
     }
 
     public int compareTo(AbstractTrader other) {
-        return (int) (Market.getTraderMoneyAmount(getTraderId()) - Market.getTraderMoneyAmount(other.getTraderId()));
+        return (int) (Market.getTraderNetWorth(getTraderId()) - Market.getTraderNetWorth(other.getTraderId()));
     }
 
     public String toString() {
-        return String.format("%s: $%.2f (traderID: %d)", name, Market.getTraderMoneyAmount(traderId), traderId);
+        return String.format("%s: $%.2f (traderID: %d)", name, Market.getTraderNetWorth(traderId), traderId);
     }
 }

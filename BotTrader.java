@@ -75,7 +75,7 @@ public class BotTrader extends AbstractTrader {
                 if (Math.random()*20 < 1) {
                     Market.buyShares(getTraderId(), 1, stock.getSymbol());
                     sharesBought++;
-                    System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") bought a share of " + stock.toString());
+                    // System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") bought a share of " + stock.toString());
                 }
             } catch (NotEnoughMoneyException e) {
                 continue;
@@ -89,13 +89,26 @@ public class BotTrader extends AbstractTrader {
             for (int i=0; i<(int)(Math.random() * 5); i++) {
                 try {
                     Market.sellShares(getTraderId(), 1, traderStocks.get(i));
-                    System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") sold a share of " + Market.getStockByTicker(traderStocks.get(i)).toString());
+                    // System.out.println(getName()+" ($" + Market.getTraderMoneyAmount(getTraderId()) + ") sold a share of " + Market.getStockByTicker(traderStocks.get(i)).toString());
                 } catch (Exception e) {
                     continue;
                 }
             }
         }
-    }
+
+      // loop thru all the stocks and insta sell if > 1.1 or < 0.9 profit
+      for (String stock : Market.getListOfStocksForTrader(getTraderId())) {
+          try {
+            double profit = Market.getProfitPercentageOnStock(getTraderId(), stock);
+            if (profit < 0.9 || profit > 1.1) {
+              Market.sellAllShares(getTraderId(), stock);
+              // System.out.println(this.toString() + " has sold all shares of " + stock);
+            }
+          } catch (NotEnoughSharesException | StockDoesNotExistException e) {
+            // System.out.println("There has been an error with selling all stocks.");
+          }
+        }
+      }
 
     public static String getRandomName() {
         return firstNames[random.nextInt(firstNames.length)] + " " + lastNames[random.nextInt(lastNames.length)];

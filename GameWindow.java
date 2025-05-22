@@ -92,6 +92,34 @@ public class GameWindow {
         }
     }
 
+    public void triggerStockEvent(
+        boolean isGood,
+        String stockName,
+        String eventMessage
+    ) {
+        if (
+            Market.getListOfStocksForTrader(Main.playerTraderId).contains(
+                stockName
+            )
+        ) {
+            // the player owns this stock
+            String message = String.format(
+                "A stock you own (%s) has been affected by a major event:%n%s",
+                stockName,
+                String.format(
+                    eventMessage,
+                    Market.getStockByTicker(stockName).getName()
+                )
+            );
+            JOptionPane.showMessageDialog(
+                gameFrame,
+                message,
+                "TM2K Alert",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+    }
+
     public static GameWindow getInstance() {
         if (singletonInstance == null) singletonInstance = new GameWindow();
         return singletonInstance;
@@ -289,7 +317,6 @@ public class GameWindow {
             simulateMarketDayButton.setFont(FontFactory.getFont("Bold", 24));
             simulateMarketDayButton.addActionListener(e -> {
                 Market.simulateMarketDay();
-                GameWindow.this.updateData();
             });
 
             constraints.gridx = 1;
@@ -320,16 +347,14 @@ public class GameWindow {
             currentDayLabel.setText(
                 String.format("Day %d", Market.getCurrentDay())
             );
-            ArrayList<AbstractTrader> traders =
-                Market.getListOfTraders();
+            ArrayList<AbstractTrader> traders = Market.getListOfTraders();
             Collections.sort(traders);
             Collections.reverse(traders);
-            traderList.setListData(
-                traders.toArray(new AbstractTrader[0])
-            );
+            traderList.setListData(traders.toArray(new AbstractTrader[0]));
         }
 
-        class PlayerHighlighterListCellRenderer extends DefaultListCellRenderer {
+        class PlayerHighlighterListCellRenderer
+            extends DefaultListCellRenderer {
 
             public Component getListCellRendererComponent(
                 JList<?> list,
@@ -365,7 +390,6 @@ public class GameWindow {
 
         public StockListPanel() {
             super();
-
             this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
             stockTable = new JTable(new StockListPanelTableModel());
@@ -389,7 +413,9 @@ public class GameWindow {
             stockTable
                 .getColumnModel()
                 .getColumn(2)
-                .setCellRenderer(new ChangeAndPercentageTableCellRenderer(true));
+                .setCellRenderer(
+                    new ChangeAndPercentageTableCellRenderer(true)
+                );
             // column 3: Shares owned (no color, right align)
             stockTable
                 .getColumnModel()
@@ -399,44 +425,27 @@ public class GameWindow {
             stockTable.addMouseListener(
                 new MouseAdapter() {
                     public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 2) {
-                            JTable target = (JTable) e.getSource();
-                            int row = target.rowAtPoint(e.getPoint());
-                            int column = target.columnAtPoint(e.getPoint());
+                        JTable target = (JTable) e.getSource();
+                        int row = target.rowAtPoint(e.getPoint());
+                        int column = target.columnAtPoint(e.getPoint());
 
-                            if (row != -1 && column != -1) {
-                                System.out.println(
-                                    "Clicked on cell: (" +
-                                    row +
-                                    ", " +
-                                    column +
-                                    ")"
-                                );
-                            } else {
-                                return;
-                            }
-
-                            String stockSymbol =
-                                ((StockListPanelTableModel) stockTable.getModel()).getTickerForRow(
-                                        row
-                                    );
-                            System.out.println(
-                                String.format(
-                                    "Going to stock display panel for stock %s",
-                                    stockSymbol
-                                )
-                            );
-                            GameWindow.this.goToStockDisplayPanel(stockSymbol);
+                        if (row == -1 || column == -1) {
+                            return;
                         }
+
+                        String stockSymbol =
+                            ((StockListPanelTableModel) stockTable.getModel()).getTickerForRow(
+                                    row
+                                );
+
+                        GameWindow.getInstance().goToStockDisplayPanel(stockSymbol);
                     }
                 }
             );
 
-
             stockListScrollPane = new JScrollPane(stockTable);
 
             this.add(stockListScrollPane);
-
         }
 
         public void updateStockListData() {
@@ -474,7 +483,10 @@ public class GameWindow {
                                 stock.getPrice(),
                                 stock.getPriceChangeFromYesterday(),
                                 stock.getPriceChangePercentFromYesterday(),
-                                Market.getSharesOwnedInStock(Main.playerTraderId, stock.getSymbol())
+                                Market.getSharesOwnedInStock(
+                                    Main.playerTraderId,
+                                    stock.getSymbol()
+                                )
                             )
                         );
                     }
@@ -499,13 +511,16 @@ public class GameWindow {
                 switch (col) {
                     case 0:
                         // Name
-                        return Market.getStockByTicker(tableData.get(row).stockSymbol()).toString();
+                        return Market.getStockByTicker(
+                            tableData.get(row).stockSymbol()
+                        ).toString();
                     case 1:
                         // Price
                         return tableData.get(row).stockPrice();
                     case 2:
                         // Change vs Yesterday
-                        return String.format("%.2f (%.2f%%)",
+                        return String.format(
+                            "%.2f (%.2f%%)",
                             tableData.get(row).changeFromYesterday(),
                             tableData.get(row).changePercent()
                         );
@@ -578,32 +593,74 @@ public class GameWindow {
             nameLabel.setFont(FontFactory.getFont("Bold", 32));
 
             buyButton.addActionListener(e -> {
+                String dialogReturn = JOptionPane.showInputDialog(
+                    gameFrame,
+                    "How many shares do you want to buy?",
+                    "TM2K Alert",
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (dialogReturn == null) {
+                    return;
+                }
+                int sharesToBuy;
+                try {
+                    sharesToBuy = Integer.parseInt(dialogReturn);
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "Please enter a valid integer.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
                 try {
                     Market.buyShares(
                         Main.playerTraderId,
-                        1,
+                        sharesToBuy,
                         currentStockSymbol
                     );
                 } catch (NotEnoughMoneyException exception) {
                     JOptionPane.showMessageDialog(
                         gameFrame,
-                        "You do not have enough money to buy this stock.",
+                        String.format("You do not have enough money to buy %d shares in this stock.", sharesToBuy),
                         "TM2K Alert",
                         JOptionPane.ERROR_MESSAGE
                     );
                 }
             });
             sellButton.addActionListener(e -> {
+                String dialogReturn = JOptionPane.showInputDialog(
+                    gameFrame,
+                    "How many shares do you want to sell?",
+                    "TM2K Alert",
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (dialogReturn == null) {
+                    return;
+                }
+                int sharesToSell;
+                try {
+                    sharesToSell = Integer.parseInt(dialogReturn);
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "Please enter a valid integer.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
                 try {
                     Market.sellShares(
                         Main.playerTraderId,
-                        1,
+                        sharesToSell,
                         currentStockSymbol
                     );
                 } catch (NotEnoughSharesException exception) {
                     JOptionPane.showMessageDialog(
                         gameFrame,
-                        "You do not have any shares in this stock.",
+                        String.format("You do not have %d shares in this stock.", sharesToSell),
                         "TM2K Alert",
                         JOptionPane.ERROR_MESSAGE
                     );
@@ -708,7 +765,9 @@ public class GameWindow {
             );
             priceHistoryTable.setFont(FontFactory.getFont("Medium", 16));
             priceHistoryTable.setRowHeight(20);
-            priceHistoryTable.getTableHeader().setFont(FontFactory.getFont("SemiBold", 18));
+            priceHistoryTable
+                .getTableHeader()
+                .setFont(FontFactory.getFont("SemiBold", 18));
             priceHistoryScrollPane = new JScrollPane(priceHistoryTable);
             TitledBorder priceHistoryBorder;
             priceHistoryBorder = BorderFactory.createTitledBorder(
@@ -728,7 +787,9 @@ public class GameWindow {
                 new String[] { "Day", "Trader", "Buy/Sell", "Shares", "Price" }
             );
             transactionTable.setFont(FontFactory.getFont("Medium", 16));
-            transactionTable.getTableHeader().setFont(FontFactory.getFont("SemiBold", 18));
+            transactionTable
+                .getTableHeader()
+                .setFont(FontFactory.getFont("SemiBold", 18));
             transactionTable.setRowHeight(20);
             transactionScrollPane = new JScrollPane(transactionTable);
             TitledBorder transactionTableBorder;
@@ -952,7 +1013,11 @@ public class GameWindow {
         }
 
         class NonEditableTableModel extends DefaultTableModel {
-            public NonEditableTableModel(Object[][] data, String[] columnNames) {
+
+            public NonEditableTableModel(
+                Object[][] data,
+                String[] columnNames
+            ) {
                 super(data, columnNames);
             }
 
@@ -1026,35 +1091,19 @@ public class GameWindow {
             stockInfoTable.addMouseListener(
                 new MouseAdapter() {
                     public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 2) {
-                            JTable target = (JTable) e.getSource();
-                            int row = target.rowAtPoint(e.getPoint());
-                            int column = target.columnAtPoint(e.getPoint());
+                        JTable target = (JTable) e.getSource();
+                        int row = target.rowAtPoint(e.getPoint());
+                        int column = target.columnAtPoint(e.getPoint());
 
-                            if (row != -1 && column != -1) {
-                                System.out.println(
-                                    "Clicked on cell: (" +
-                                    row +
-                                    ", " +
-                                    column +
-                                    ")"
-                                );
-                            } else {
-                                return;
-                            }
-
-                            String stockSymbol =
-                                ((CustomTableModel) stockInfoTable.getModel()).getTickerForRow(
-                                        row
-                                    );
-                            System.out.println(
-                                String.format(
-                                    "Going to stock display panel for stock %s",
-                                    stockSymbol
-                                )
-                            );
-                            GameWindow.this.goToStockDisplayPanel(stockSymbol);
+                        if (row == -1 || column == -1) {
+                            return;
                         }
+
+                        String stockSymbol =
+                            ((CustomTableModel) stockInfoTable.getModel()).getTickerForRow(
+                                    row
+                                );
+                        GameWindow.getInstance().goToStockDisplayPanel(stockSymbol);
                     }
                 }
             );
