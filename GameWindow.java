@@ -593,32 +593,74 @@ public class GameWindow {
             nameLabel.setFont(FontFactory.getFont("Bold", 32));
 
             buyButton.addActionListener(e -> {
+                String dialogReturn = JOptionPane.showInputDialog(
+                    gameFrame,
+                    "How many shares do you want to buy?",
+                    "TM2K Alert",
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (dialogReturn == null) {
+                    return;
+                }
+                int sharesToBuy;
+                try {
+                    sharesToBuy = Integer.parseInt(dialogReturn);
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "Please enter a valid integer.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
                 try {
                     Market.buyShares(
                         Main.playerTraderId,
-                        1,
+                        sharesToBuy,
                         currentStockSymbol
                     );
                 } catch (NotEnoughMoneyException exception) {
                     JOptionPane.showMessageDialog(
                         gameFrame,
-                        "You do not have enough money to buy this stock.",
+                        String.format("You do not have enough money to buy %d shares in this stock.", sharesToBuy),
                         "TM2K Alert",
                         JOptionPane.ERROR_MESSAGE
                     );
                 }
             });
             sellButton.addActionListener(e -> {
+                String dialogReturn = JOptionPane.showInputDialog(
+                    gameFrame,
+                    "How many shares do you want to sell?",
+                    "TM2K Alert",
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (dialogReturn == null) {
+                    return;
+                }
+                int sharesToSell;
+                try {
+                    sharesToSell = Integer.parseInt(dialogReturn);
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(
+                        gameFrame,
+                        "Please enter a valid integer.",
+                        "TM2K Alert",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
                 try {
                     Market.sellShares(
                         Main.playerTraderId,
-                        1,
+                        sharesToSell,
                         currentStockSymbol
                     );
                 } catch (NotEnoughSharesException exception) {
                     JOptionPane.showMessageDialog(
                         gameFrame,
-                        "You do not have any shares in this stock.",
+                        String.format("You do not have %d shares in this stock.", sharesToSell),
                         "TM2K Alert",
                         JOptionPane.ERROR_MESSAGE
                     );
